@@ -1,14 +1,19 @@
 package ordina.youbionic.infrastructure;
 
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class RabbitMQSender {
+
+public class RabbitMQPublisher {
+//    @Autowired
     private final static String QUEUE_NAME = "servotest";
-    public static void main(String[] argv) throws Exception{
+
+    public RabbitMQPublisher() throws Exception{
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
+        factory.setPort(5672);
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
@@ -17,4 +22,5 @@ public class RabbitMQSender {
             System.out.println(" [x] Sent '" + message + "'");
         }
     }
+
 }
