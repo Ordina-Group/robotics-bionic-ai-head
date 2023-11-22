@@ -1,0 +1,25 @@
+sudo apt update
+sudo apt install wget maven python3.11 rabbitmq-server
+sudo systemctl enable rabbitmq-server
+sudo systemctl start rabbitmq-server
+wget https://download.oracle.com/java/21/latest/jdk-21_linux-aarch64_bin.tar.gz
+tar -xvf jdk-21_linux-aarch64_bin.tar.gz
+cd jdk-21.0.1
+sudo mkdir -p /usr/local/jdk-21
+sudo mv * /usr/local/jdk-21
+source ~/.bashrc
+echo 'export JAVA_HOME=/usr/local/jdk-21' >> ~/.bashrc
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+sudo apt update
+sudo apt upgrade
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install adafruit-blinka
+pip3 install adafruit-circuitpython-servokit
+pip3 install adafruit_pca9685
+pip3 install pika
+
+sudo raspi-config
+Interface options -> i2c -> Enable -> Yes -> Finish
