@@ -20,6 +20,7 @@ pip3 install adafruit-blinka
 pip3 install adafruit-circuitpython-servokit
 pip3 install adafruit_pca9685
 pip3 install pika
+pip3 install RPi.GPIO
 
 sudo raspi-config
 Interface options -> i2c -> Enable -> Yes -> Finish
