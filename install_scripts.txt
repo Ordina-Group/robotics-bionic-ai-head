@@ -7,6 +7,9 @@ tar -xvf jdk-21_linux-aarch64_bin.tar.gz
 cd jdk-21.0.1
 sudo mkdir -p /usr/local/jdk-21
 sudo mv * /usr/local/jdk-21
+cd ..
+wget https://download.jetbrains.com/idea/ideaIU-2023.2.5.tar.gz
+tar -xvf ideaIU-2023.2.5.tar.gz
 source ~/.bashrc
 echo 'export JAVA_HOME=/usr/local/jdk-21' >> ~/.bashrc
 echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
@@ -20,6 +23,7 @@ pip3 install adafruit-blinka
 pip3 install adafruit-circuitpython-servokit
 pip3 install adafruit_pca9685
 pip3 install pika
+pip3 install RPi.GPIO
 
 sudo raspi-config
 Interface options -> i2c -> Enable -> Yes -> Finish
