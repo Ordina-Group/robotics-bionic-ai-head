@@ -18,7 +18,7 @@ public class ServoService {
         }
     }
     public String test0() throws Exception{
-        String message = "15,0,0";
+        String message = "15,90,0";
         try {
             publish(message);
         } catch (InvalidCommandException e){
@@ -27,13 +27,119 @@ public class ServoService {
         return "Great success";
     }
 
-    //TODO: DEZE SCHRIJVEN!
+    public void closeEyes() throws Exception{
+        String closeRight = "3,80,1";
+        String closeLeft = "2,120,1";
+        try{
+            publish(closeLeft);
+            publish(closeRight);
+        } catch(InvalidCommandException e) {
+            throw new InvalidCommandException(e.getMessage());
+        }
+    }
 
+    public void openEyes() throws Exception{
+        String openRight = "3,120,1";
+        String openLeft = "2,80,1";
+        try{
+            publish(openLeft);
+            publish(openRight);
+        } catch(InvalidCommandException e) {
+            throw new InvalidCommandException(e.getMessage());
+        }
+    }
+
+    public void blink() throws Exception{
+        try{
+            closeEyes();
+            Thread.sleep(100);
+            openEyes();
+        } catch(InvalidCommandException e) {
+            throw new InvalidCommandException(e.getMessage());
+        }
+    }
+    public String laugh() throws Exception{
+        String[] baseposition = {"13,110,1", "2,80,1", "3,100,1", "4,90,1", "1,90,1", "5,60,1", "14,95,1"};
+        String[] eyeroll = {"1,110,1", "4,70,1", "13,120,1"};
+        String[] laugh1 = {"5,90,1", "13,130,1"};
+        String[] laugh2 = {"5,70,1", "13,115,1"};
+        try{
+            for(String msg : baseposition){
+                publish(msg);
+            }
+            Thread.sleep(100);
+            for(String msg : eyeroll){
+                publish(msg);
+            }
+            Thread.sleep(200);
+            closeEyes();
+            for(int i = 0; i < 8; i++){
+                for(String message : laugh1){
+                    publish(message);
+                }
+                Thread.sleep(200);
+                for(String message : laugh2){
+                    publish(message);
+                }
+                Thread.sleep(200);
+            }
+            for(String msg : baseposition){
+                publish(msg);
+            }
+        } catch(InvalidCommandException e){
+            throw new InvalidCommandException(e.getMessage());
+        }
+        return "Hahaha";
+    }
+
+    public void nodYes() throws Exception{
+        try{
+            closeEyes();
+            String down = "13,80,1";
+            String up = "13,130,1";
+            String normal = "13,110,1";
+            for(int i = 0; i < 3; i++){
+                publish(down);
+                Thread.sleep(400);
+                publish(up);
+                Thread.sleep(400);
+            }
+            publish(normal);
+            openEyes();
+        } catch(InvalidCommandException e){
+            throw new InvalidCommandException(e.getMessage());
+        }
+    }
+
+    public void shakeNo() throws Exception{
+        try{
+            closeEyes();
+            String left = "14,105,1";
+            String right = "14,85,1";
+            String normal = "14,95,1";
+            for(int i = 0; i < 3; i++){
+                publish(left);
+                Thread.sleep(500);
+                publish(right);
+                Thread.sleep(500);
+            }
+            publish(normal);
+            openEyes();
+        } catch(InvalidCommandException e){
+            throw new InvalidCommandException(e.getMessage());
+        }
+    }
     public String testAll() throws Exception{
-        String[] messages = {"0,0,1", "1,0,1", "2,0,1", "3,0,1", "4,0,1", "5,0,1", "13,0,1", "14,0,1", "15,0,1"};
+        String[] messages = {"0,60,1", "1,60,1", "2,60,1", "3,60,1", "4,60,1", "5,60,1", "13,60,1", "14,60,1", "15,60,1"};
+        String[] messages2 = {"0,120,1", "1,120,1", "2,120,1", "3,120,1", "4,120,1", "5,120,1", "13,120,1", "14,120,1", "15,120,1"};
         for(String message : messages){
             publish(message);
-
+            Thread.sleep(500);
+        }
+        Thread.sleep(2000);
+        for(String message : messages2){
+            publish(message);
+            Thread.sleep(500);
         }
         return "All servomotors should move. If not, one might have broken.";
     }
@@ -47,15 +153,35 @@ public class ServoService {
         return "All servomotors reset to 90 degrees and ready for assembly!";
     }
 
-    //TODO: DEZE AFMAKEN!!
-    public String manualServoRotation(String message) throws Exception{
+    public String rest() throws Exception{
+        String[] messages = {"0,90,1", "1,100,1", "2,80,1", "3,80,1", "4,105,1", "5,70,1", "13,110,1", "14,95,1", "15,95,1"};
+        for(String message : messages){
+            publish(message);
+        }
+        return "Head set in neutral position!";
+    }
+
+    public String config(String servo) throws Exception{
         try{
+            String message = servo + ",80,1";
+            publish(message);
+            Thread.sleep(1000);
+            String message2 = servo + ",100,1";
+            publish(message2);
+        } catch (InvalidCommandException e) {
+            throw new RuntimeException(e);
+        }
+        return "Successfully moved servomotor number " + servo;
+    }
+
+    public String manual(String servo, String angle) throws Exception{
+        try{
+            String message = servo + "," + angle + ",1";
             publish(message);
         } catch (InvalidCommandException e) {
             throw new RuntimeException(e);
         }
-        String[] splitMessage = message.split(",");
-        return "Successfully moved servomotor number " + splitMessage[0] + " by " + splitMessage[1] + " degrees.";
+        return "Successfully moved servomotor number " + servo + " to " + angle + " degrees.";
     }
 
     // In this method, we validate if the message we're about to publish to RabbitMQ meets all requirements. For the YouBionic head, we have exactly 9 servomotors, they are plugged in on pins 0,1,2,3,4,5, 13,14,15
