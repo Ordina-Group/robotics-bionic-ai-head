@@ -228,6 +228,11 @@ public class ServoService {
         else{
             overwrite = 0;
         }
+        if(tracker.getIsMoving(servoEnum)){
+            if(!override){
+                return;
+            }
+        }
         String command = config.getServoNumber(servoEnum) + "," + angle + "," + overwrite;
         validateCommand(command);
         tracker.setCurrentRotation(servoEnum, angle);
@@ -240,6 +245,11 @@ public class ServoService {
         }
         if(stepsInMilliseconds < 0){
             throw new InvalidCommandException("Tried to move a servomotor every negative amount of milliseconds (" + incrementInDegrees + " degrees every " + stepsInMilliseconds + "ms)");
+        }
+        if(tracker.getIsMoving(servoEnum)){
+            if(!override){
+                return;
+            }
         }
         int currentAngle = tracker.getCurrentRotation(servoEnum);
         tracker.setIsMoving(servoEnum, true);

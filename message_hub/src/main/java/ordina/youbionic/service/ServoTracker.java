@@ -79,7 +79,7 @@ public class ServoTracker {
         }
     }
 
-    public boolean getInMotion(ServoEnum servo){
+    public boolean getIsMoving(ServoEnum servo){
         return switch (servo) {
             case EYE_LEFT -> eyeLeft_inMotion;
             case EYE_RIGHT -> eyeRight_inMotion;
