@@ -1,5 +1,6 @@
 package ordina.youbionic.service;
 
+import com.rabbitmq.client.UnblockedCallback;
 import ordina.youbionic.Exception.IllegalEnumValueException;
 import ordina.youbionic.Exception.InvalidCommandException;
 import ordina.youbionic.configuration.ServoEnum;
@@ -60,7 +61,7 @@ public class ServoService {
             throw new InvalidCommandException(e.getMessage());
         }
     }
-    // TODO: DEZE FIXEN!
+
     public void laugh() throws Exception{
         boolean override = true;
         Map<ServoEnum, Integer> basePosition = Map.of(ServoEnum.HEAD_TILT, 110, ServoEnum.EYE_RIGHT_OPEN, 80, ServoEnum.EYE_LEFT_OPEN, 100, ServoEnum.EYES_UP_DOWN, 90, ServoEnum.EYE_LEFT, 90, ServoEnum.MOUTH, 60, ServoEnum.HEAD_SWIVEL, 95);
