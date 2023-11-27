@@ -221,6 +221,11 @@ public class ServoService {
     }
 
     private void publish(ServoEnum servoEnum, int angle, boolean override) throws InvalidCommandException, IllegalEnumValueException {
+        if(tracker.getIsMoving(servoEnum)){
+            if(!override){
+                return;
+            }
+        }
         int overwrite;
         if(override){
             overwrite = 1;
@@ -228,15 +233,10 @@ public class ServoService {
         else{
             overwrite = 0;
         }
-        if(tracker.getIsMoving(servoEnum)){
-            if(!override){
-                return;
-            }
-        }
         String command = config.getServoNumber(servoEnum) + "," + angle + "," + overwrite;
         validateCommand(command);
-        tracker.setCurrentRotation(servoEnum, angle);
         publisher.publish(QueueEnum.SERVO, command);
+        tracker.setCurrentRotation(servoEnum, angle);
     }
 
     private void slowlyMove(ServoEnum servoEnum, int desiredAngle, boolean override, int incrementInDegrees, int stepsInMilliseconds) throws InvalidCommandException, IllegalEnumValueException, InterruptedException {
