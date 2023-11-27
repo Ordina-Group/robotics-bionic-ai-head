@@ -235,27 +235,35 @@ public class ServoService {
     }
 
     private void slowlyMove(ServoEnum servoEnum, int desiredAngle, boolean override, int incrementInDegrees, int stepsInMilliseconds) throws InvalidCommandException, IllegalEnumValueException, InterruptedException {
-          int currentAngle = tracker.getCurrentRotation(servoEnum);
-          while(currentAngle != desiredAngle){
-              if(currentAngle < desiredAngle && currentAngle + incrementInDegrees <= desiredAngle){
-                  publish(servoEnum, currentAngle + incrementInDegrees, override);
-                  currentAngle = currentAngle + incrementInDegrees;
-                  Thread.sleep(stepsInMilliseconds);
-              }
-              else if(currentAngle < desiredAngle && currentAngle + incrementInDegrees > desiredAngle){
-                  currentAngle = desiredAngle;
-                  publish(servoEnum, desiredAngle, override);
-              }
-              else if(currentAngle > desiredAngle && currentAngle - incrementInDegrees >= desiredAngle){
-                  publish(servoEnum, currentAngle - incrementInDegrees, override);
-                  currentAngle = currentAngle - incrementInDegrees;
-                  Thread.sleep(stepsInMilliseconds);
-              }
-              else if(currentAngle > desiredAngle && currentAngle - incrementInDegrees < desiredAngle){
-                  publish(servoEnum, desiredAngle, override);
-                  currentAngle = desiredAngle;
-              }
+        if(incrementInDegrees < 0){
+            throw new InvalidCommandException("Tried to move the servomotor number " + config.getServoNumber(servoEnum) + " by " + incrementInDegrees + " degrees. It can't be negative");
+        }
+        if(stepsInMilliseconds < 0){
+            throw new InvalidCommandException("Tried to move a servomotor every negative amount of milliseconds (" + incrementInDegrees + " degrees every " + stepsInMilliseconds + "ms)");
+        }
+        int currentAngle = tracker.getCurrentRotation(servoEnum);
+        tracker.setIsMoving(servoEnum, true);
+        while(currentAngle != desiredAngle){
+          if(currentAngle < desiredAngle && currentAngle + incrementInDegrees <= desiredAngle){
+              publish(servoEnum, currentAngle + incrementInDegrees, override);
+              currentAngle = currentAngle + incrementInDegrees;
+              Thread.sleep(stepsInMilliseconds);
           }
+          else if(currentAngle < desiredAngle && currentAngle + incrementInDegrees > desiredAngle){
+              currentAngle = desiredAngle;
+              publish(servoEnum, desiredAngle, override);
+          }
+          else if(currentAngle > desiredAngle && currentAngle - incrementInDegrees >= desiredAngle){
+              publish(servoEnum, currentAngle - incrementInDegrees, override);
+              currentAngle = currentAngle - incrementInDegrees;
+              Thread.sleep(stepsInMilliseconds);
+          }
+          else if(currentAngle > desiredAngle && currentAngle - incrementInDegrees < desiredAngle){
+              publish(servoEnum, desiredAngle, override);
+              currentAngle = desiredAngle;
+          }
+        }
+        tracker.setIsMoving(servoEnum, false);
     }
 
 }
