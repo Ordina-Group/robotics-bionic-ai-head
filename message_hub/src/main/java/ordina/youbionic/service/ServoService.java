@@ -5,7 +5,6 @@ import ordina.youbionic.Exception.InvalidCommandException;
 import ordina.youbionic.configuration.ServoEnum;
 import ordina.youbionic.infrastructure.QueueEnum;
 import ordina.youbionic.infrastructure.RabbitMQPublisher;
-import org.javatuples.Pair;
 import org.springframework.stereotype.Service;
 import ordina.youbionic.configuration.ServoConfig;
 
