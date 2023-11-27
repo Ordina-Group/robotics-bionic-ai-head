@@ -1,9 +1,6 @@
 package ordina.youbionic.presentation;
 
-import ordina.youbionic.infrastructure.QueueEnum;
-import ordina.youbionic.infrastructure.RabbitMQPublisher;
 import ordina.youbionic.service.ServoService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,39 +13,32 @@ public class ServoController {
         this.service = new ServoService();
     }
 
-    @GetMapping("/test0")
-    public String test0() throws Exception{
-        return service.test0();
-    }
-
-    @GetMapping("/test1")
-    public String test1() throws Exception{
-        return service.testAll();
-    }
-
     @PutMapping("/reset")
     public String reset() throws Exception{
-        return service.reset();
+        service.reset();
+        return "All servomotors reset to 90 degrees and ready for assembly!";
     }
 
     @PutMapping("/laugh")
     public String laugh() throws Exception{
-        return service.laugh();
+        service.laugh();
+        return "Hahahaha";
     }
 
-    @PutMapping("/config/{servo}")
-    public String config(@PathVariable String servo) throws Exception{
-        return service.config(servo);
+    @PutMapping("/configure/{servo}")
+    public String configure(@PathVariable int servo) throws Exception{
+        return service.configure(servo);
     }
 
     @PutMapping("/manual/{servo}/{angle}")
-    public String manual(@PathVariable String servo, @PathVariable String angle) throws Exception{
+    public String manual(@PathVariable int servo, @PathVariable int angle) throws Exception{
         return service.manual(servo, angle);
     }
 
     @PutMapping("/rest")
     public String rest() throws Exception{
-        return service.rest();
+        service.rest();
+        return "Head returned to resting position";
     }
 
     @PutMapping("/blink")
