@@ -15,11 +15,16 @@ import java.util.*;
 public class ServoService {
     private final RabbitMQPublisher publisher;
     private final ServoConfig config;
+    private final ServoTracker tracker;
+
 
     public ServoService(){
         this.config = new ServoConfig();
         try {
             this.publisher = new RabbitMQPublisher();
+            this.tracker = new ServoTracker();
+            publisher.purge(QueueEnum.SERVO);
+            rest();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -46,6 +51,8 @@ public class ServoService {
     }
 
     public void blink() throws Exception{
+        // TODO: Overal waar 'Thread.sleep' staat, dat vervangen met non-blocking sleep
+        // TODO: virtual threads?
         try{
             closeEyes();
             Thread.sleep(100);
@@ -224,7 +231,32 @@ public class ServoService {
         }
         String command = config.getServoNumber(servoEnum) + "," + angle + "," + overwrite;
         validateCommand(command);
+        tracker.setCurrentRotation(servoEnum, angle);
         publisher.publish(QueueEnum.SERVO, command);
+    }
+
+    private void slowlyMove(ServoEnum servoEnum, int desiredAngle, boolean override, int incrementInDegrees, int stepsInMilliseconds) throws InvalidCommandException, IllegalEnumValueException, InterruptedException {
+          int currentAngle = tracker.getCurrentRotation(servoEnum);
+          while(currentAngle != desiredAngle){
+              if(currentAngle < desiredAngle && currentAngle + incrementInDegrees <= desiredAngle){
+                  publish(servoEnum, currentAngle + incrementInDegrees, override);
+                  currentAngle = currentAngle + incrementInDegrees;
+                  Thread.sleep(stepsInMilliseconds);
+              }
+              else if(currentAngle < desiredAngle && currentAngle + incrementInDegrees > desiredAngle){
+                  currentAngle = desiredAngle;
+                  publish(servoEnum, desiredAngle, override);
+              }
+              else if(currentAngle > desiredAngle && currentAngle - incrementInDegrees >= desiredAngle){
+                  publish(servoEnum, currentAngle - incrementInDegrees, override);
+                  currentAngle = currentAngle - incrementInDegrees;
+                  Thread.sleep(stepsInMilliseconds);
+              }
+              else if(currentAngle > desiredAngle && currentAngle - incrementInDegrees < desiredAngle){
+                  publish(servoEnum, desiredAngle, override);
+                  currentAngle = desiredAngle;
+              }
+          }
     }
 
 }

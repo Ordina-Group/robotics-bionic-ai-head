@@ -46,4 +46,13 @@ public class RabbitMQPublisher {
         }
     }
 
+    public void purge(QueueEnum queueEnum) throws IOException {
+        String queue = switch(queueEnum){
+            case SERVO -> "servo";
+            case AUDIO_INPUT -> "audio_input";
+            case AUDIO_OUTPUT -> "audio_output";
+        };
+        channel.queuePurge(queue);
+    }
+
 }
