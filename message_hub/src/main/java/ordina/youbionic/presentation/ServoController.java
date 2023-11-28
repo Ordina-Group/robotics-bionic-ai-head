@@ -40,7 +40,7 @@ public class ServoController {
     @PutMapping("/rest")
     public String rest() throws Exception{
         service.rest();
-        return "Head returned to resting position";
+        return "Head returned to resting position.";
     }
 
     @PutMapping("/blink")
