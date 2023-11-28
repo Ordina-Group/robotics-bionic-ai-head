@@ -3,7 +3,7 @@ package ordina.youbionic.infrastructure;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import ordina.youbionic.Exception.IllegalEnumValueException;
+import ordina.youbionic.exception.IllegalEnumValueException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class RabbitMQPublisher {
     }
 
     // We work using an Enum for the queue, in order to reduce error rates.
-    public void publish(QueueEnum queueEnum, String message) throws IllegalEnumValueException{
+    public void publish(final QueueEnum queueEnum, final String message) throws IllegalEnumValueException{
         String queue_name;
         switch (queueEnum) {
             case SERVO:
@@ -46,7 +46,7 @@ public class RabbitMQPublisher {
         }
     }
 
-    public void purge(QueueEnum queueEnum) throws IOException {
+    public void purge(final QueueEnum queueEnum) throws IOException {
         String queue = switch(queueEnum){
             case SERVO -> "servo";
             case AUDIO_INPUT -> "audio_input";

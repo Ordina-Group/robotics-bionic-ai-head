@@ -6,11 +6,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class YoubionicRabbitmqApplication {
+public class YoubionicApplication {
 //	private static final PythonController pythonController = new PythonController();
 
 	public static void main(String[] args) {
-		SpringApplication.run(YoubionicRabbitmqApplication.class, args);
+		SpringApplication.run(YoubionicApplication.class, args);
 //		pythonController.startPython();
 	}
 

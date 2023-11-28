@@ -11,8 +11,8 @@
 	<groupId>ordina</groupId>
 	<artifactId>youbionic</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>youbionic-rabbitmq</name>
-	<description>RabbitMQ Implementation of the YouBionic Robothead</description>
+	<name>youbionic</name>
+	<description>Implementation of the YouBionic Robothead</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -20,6 +20,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

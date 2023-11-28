@@ -1,6 +1,6 @@
 package ordina.youbionic.configuration;
 
-import ordina.youbionic.Exception.IllegalEnumValueException;
+import ordina.youbionic.exception.IllegalEnumValueException;
 
 
 // In this config class, we define what servomotor is hooked up to what pins on the Adafruit PCA9685.

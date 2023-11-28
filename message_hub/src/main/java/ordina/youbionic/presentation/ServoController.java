@@ -1,11 +1,13 @@
 package ordina.youbionic.presentation;
 
+import lombok.RequiredArgsConstructor;
 import ordina.youbionic.service.ServoService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+//    @RequiredArgsConstructor
 public class ServoController {
     private final ServoService service;
 
