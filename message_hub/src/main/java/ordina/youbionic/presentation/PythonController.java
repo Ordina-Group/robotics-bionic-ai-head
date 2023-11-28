@@ -3,6 +3,7 @@ package ordina.youbionic.presentation;
 import java.io.IOException;
 
 public class PythonController {
+    // TODO: Make sure the path-to-python-file gets fixed
     private ProcessBuilder pb = new ProcessBuilder("python", "path-to-python-file.py");
     private Process pythonProcess;
 
