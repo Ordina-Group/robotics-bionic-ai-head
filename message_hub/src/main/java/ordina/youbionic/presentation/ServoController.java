@@ -2,8 +2,8 @@ package ordina.youbionic.presentation;
 
 import lombok.RequiredArgsConstructor;
 import ordina.youbionic.service.ServoService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,50 +15,44 @@ public class ServoController {
         this.service = new ServoService();
     }
 
-    @PutMapping("/reset")
-    public String reset() throws Exception{
+    @GetMapping("/reset")
+    public void reset() throws Exception{
         service.reset();
-        return "All servomotors reset to 90 degrees and ready for assembly!";
     }
 
-    @PutMapping("/laugh")
-    public String laugh() throws Exception{
+    @GetMapping("/laugh")
+    public void laugh() throws Exception{
         service.laugh();
-        return "Hahahaha";
     }
 
-    @PutMapping("/configure/{servo}")
+    @GetMapping("/configure/{servo}")
     public String configure(@PathVariable int servo) throws Exception{
         return service.configure(servo);
     }
 
-    @PutMapping("/manual/{servo}/{angle}")
+    @GetMapping("/manual/{servo}/{angle}")
     public String manual(@PathVariable int servo, @PathVariable int angle) throws Exception{
         return service.manual(servo, angle);
     }
 
-    @PutMapping("/rest")
-    public String rest() throws Exception{
+    @GetMapping("/rest")
+    public void rest() throws Exception{
         service.rest();
-        return "Head returned to resting position.";
     }
 
-    @PutMapping("/blink")
-    public String blink() throws Exception{
+    @GetMapping("/blink")
+    public void blink() throws Exception{
         service.blink();
-        return "Blinked.";
     }
 
-    @PutMapping("/yes")
-    public String yes() throws Exception{
+    @GetMapping("/yes")
+    public void yes() throws Exception{
         service.nodYes();
-        return "Yes.";
     }
 
-    @PutMapping("/no")
-    public String no() throws Exception{
+    @GetMapping("/no")
+    public void no() throws Exception{
         service.shakeNo();
-        return "No.";
     }
 
 }
