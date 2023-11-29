@@ -32,8 +32,8 @@ public class ServoService {
     public void closeEyes() throws Exception{
         final boolean override = true;
         try{
-            publish(ServoEnum.EYE_RIGHT_OPEN, 80, override);
-            publish(ServoEnum.EYE_LEFT_OPEN, 120, override);
+            publish(ServoEnum.EYE_RIGHT_OPEN, config.getMaxRotation(ServoEnum.EYE_RIGHT_OPEN), override);
+            publish(ServoEnum.EYE_LEFT_OPEN, config.getMinRotation(ServoEnum.EYE_LEFT_OPEN), override);
         } catch(InvalidCommandException e) {
             throw new InvalidCommandException(e.getMessage());
         }
@@ -42,8 +42,8 @@ public class ServoService {
     public void openEyes() throws Exception{
         final boolean override = true;
         try{
-            publish(ServoEnum.EYE_RIGHT_OPEN, 120, override);
-            publish(ServoEnum.EYE_LEFT_OPEN, 80, override);
+            publish(ServoEnum.EYE_RIGHT_OPEN, config.getDefaultRotation(ServoEnum.EYE_RIGHT_OPEN), override);
+            publish(ServoEnum.EYE_LEFT_OPEN, config.getDefaultRotation(ServoEnum.EYE_LEFT_OPEN), override);
         } catch(InvalidCommandException e) {
             throw new InvalidCommandException(e.getMessage());
         }
@@ -54,7 +54,7 @@ public class ServoService {
         // TODO: virtual threads?
         try{
             closeEyes();
-            Thread.sleep(100);
+            Thread.sleep(250);
             openEyes();
         } catch(InvalidCommandException e) {
             throw new InvalidCommandException(e.getMessage());

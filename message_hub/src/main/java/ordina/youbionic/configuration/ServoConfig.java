@@ -41,7 +41,7 @@ public class ServoConfig {
             return 3;
         }
         static final int defaultRotation() {
-            return 90;
+            return 100;
         }
         final static int minRotation(){
             return 80;
@@ -52,7 +52,7 @@ public class ServoConfig {
         static final int pinNumber() {
             return 2;
         }
-        static final int defaultRotation() {return 90;}
+        static final int defaultRotation() {return 80;}
         static final int minRotation(){
             return 80;
         }
