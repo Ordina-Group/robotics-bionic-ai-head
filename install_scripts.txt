@@ -1,5 +1,5 @@
 sudo apt update
-sudo apt install wget maven python3.11 rabbitmq-server
+sudo apt install wget maven python3.11 rabbitmq-server audacity portaudio19-dev
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
 wget https://download.oracle.com/java/21/latest/jdk-21_linux-aarch64_bin.tar.gz
@@ -8,6 +8,9 @@ cd jdk-21.0.1
 sudo mkdir -p /usr/local/jdk-21
 sudo mv * /usr/local/jdk-21
 cd ..
+cd /usr/lib/python3.11
+sudo rm EXTERNALLY-MANAGED
+cd ~
 wget https://download.jetbrains.com/idea/ideaIU-2023.2.5.tar.gz
 tar -xvf ideaIU-2023.2.5.tar.gz
 source ~/.bashrc
@@ -16,14 +19,14 @@ echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 sudo apt update
 sudo apt upgrade
-
-python3 -m venv .venv
-source .venv/bin/activate
 pip3 install adafruit-blinka
 pip3 install adafruit-circuitpython-servokit
 pip3 install adafruit_pca9685
 pip3 install pika
 pip3 install RPi.GPIO
+pip3 install pyaudio
+
+--------------------------------------------------------------------------------------------------------------
 
 sudo raspi-config
 Interface options -> i2c -> Enable -> Yes -> Finish
