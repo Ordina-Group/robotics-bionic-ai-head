@@ -7,13 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//    @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class ServoController {
     private final ServoService service;
-
-    public ServoController(){
-        this.service = new ServoService();
-    }
 
     @GetMapping("/reset")
     public void reset() throws Exception{

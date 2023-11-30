@@ -1,4 +1,4 @@
-/target/
+/message_hub/target/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
