@@ -8,13 +8,16 @@ def main():
 	channel.queue_declare(queue='servo')
 	
 	def callback(ch, method, properties, body):
-		instruction = body.decode().split(',')
-		print(f" [x] Received {instruction}")
-		servo = int(instruction[0])
-		angle = int(instruction[1])
-		override = int(instruction[2])
-		kit.servo[servo].angle=angle
-		ch.basic_ack(delivery_tag=method.delivery_tag)
+		instructions = body.decode().split(',')
+		print(f" [x] Received {instructions}")
+		amountofinstructions = instructions.pop(0)
+		override = int(instructions.pop(-1))
+		for instruction in range(amountofinstructions):
+			servo = int(instructions.pop(0))
+			angle = int(instructions.pop(0))
+			kit.servo[servo].angle=angle
+			ch.basic_ack(delivery_tag=method.delivery_tag)
+
 	
 	channel.basic_consume(queue='servo', on_message_callback=callback)
 	

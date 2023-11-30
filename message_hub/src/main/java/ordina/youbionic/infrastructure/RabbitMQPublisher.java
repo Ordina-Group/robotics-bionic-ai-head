@@ -21,6 +21,7 @@ public class RabbitMQPublisher {
         channel.queueDeclare("servo", false, false, false, null);
         channel.queueDeclare("audio_input", false, false, false, null);
         channel.queueDeclare("audio_output", false, false, false, null);
+        channel.queuePurge("servo");
     }
 
     // We work using an Enum for the queue, in order to reduce error rates.

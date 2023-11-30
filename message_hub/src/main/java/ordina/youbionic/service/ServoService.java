@@ -1,5 +1,6 @@
 package ordina.youbionic.service;
 
+import lombok.RequiredArgsConstructor;
 import ordina.youbionic.exception.IllegalEnumValueException;
 import ordina.youbionic.exception.InvalidCommandException;
 import ordina.youbionic.configuration.ServoEnum;
@@ -11,19 +12,17 @@ import ordina.youbionic.configuration.ServoConfig;
 import java.util.*;
 
 @Service
+//@RequiredArgsConstructor
 public class ServoService {
     private final RabbitMQPublisher publisher;
     private final ServoConfig config;
     private final ServoTracker tracker;
-
 
     public ServoService(){
         this.config = new ServoConfig();
         try {
             this.publisher = new RabbitMQPublisher();
             this.tracker = new ServoTracker();
-            publisher.purge(QueueEnum.SERVO);
-            rest();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -169,38 +168,59 @@ public class ServoService {
 
     // In this method, we validate if the message we're about to publish to RabbitMQ meets all requirements. For the YouBionic head, we have exactly 9 servomotors, they are plugged in on pins 0,1,2,3,4,5, 13,14,15
     // They can rotate between 0 and 180 degrees. The messages must also contain an override value of 0 or 1. Nothing else can be included.
-    private void validateCommand(final String message) throws InvalidCommandException {
+    private String validateCommand(final String message) throws InvalidCommandException {
+        // Check if the command is empty
         if(message == null  || message.isEmpty()){
             throw new InvalidCommandException("Command is empty.");
         }
         final String[] splitMessage = message.split(",");
-        if(splitMessage.length != 3){
-            throw new InvalidCommandException("Command is faulty. It has " + splitMessage.length + " elements, while it needs exactly 3.");
+
+        // Create a validated command we can use later
+        StringBuilder validatedCommand = new StringBuilder();
+
+        // Check if command has appropriate amount of elements
+        final int amountOfInstructions = Integer.parseInt(splitMessage[0]);
+        if(amountOfInstructions == 0){
+            throw new InvalidCommandException("Command is faulty. It has declared to have 0 elements.");
         }
-        try{
-            final int servoNumber = Integer.parseInt(splitMessage[0]);
-            if(servoNumber < 0 || servoNumber > 15){
-                throw new InvalidCommandException("Servomotor out of bounds. Tried to send message to servomotor number " + splitMessage[0] + ".");
+        if(splitMessage.length != (amountOfInstructions * 2) + 2){
+            throw new InvalidCommandException("Command is faulty. It has " + splitMessage.length + " elements. It needs 1 for the length of the command, 2 for every movable servomotor, and 1 last one for the override. ");
+        }
+        validatedCommand.append(amountOfInstructions).append(",");
+
+        // Check if override is correct
+        final int override = Integer.parseInt(splitMessage[splitMessage.length - 1]);
+        if (override < 0 || override > 1) {
+            throw new InvalidCommandException("Command is faulty. Override should be 0 or 1, not " + override + ".");
+        }
+
+        // Copy command without amount of instructions and override, so we can easily iterate over it
+        int[] numbers = new int[splitMessage.length - 2];
+        for(int i = 0, k = 0; i < splitMessage.length; i++){
+            if(i != 0 && i != splitMessage.length - 1){
+                numbers[k] = Integer.parseInt(splitMessage[i]);
+                k++;
             }
-        } catch (NumberFormatException e){
-            throw new InvalidCommandException("Command is faulty. Tried to send message to servomotor number " + splitMessage[0] + ".");
         }
-        try{
-            final int angle = Integer.parseInt(splitMessage[1]);
-            if(angle < 0 || angle > 180){
+
+        // Iterate over the separate commands, to see if they are correct
+        for(int i = 0; i < numbers.length;) {
+            final int servoNumber = numbers[i];
+            if (servoNumber < 0 || servoNumber > 15) {
+                throw new InvalidCommandException("Servomotor out of bounds. Tried to send message to servomotor number " + numbers[0] + ".");
+            }
+            validatedCommand.append(numbers[i]).append(",");
+            i++;
+            final int angle = numbers[i];
+            if (angle < 0 || angle > 180) {
                 throw new InvalidCommandException("Angle out of bounds. Tried to move servomotor by " + splitMessage[1] + " degrees. Range is 0-180 degrees.");
             }
-        } catch (NumberFormatException e){
-            throw new InvalidCommandException("Command is faulty. Tried to move servomotor by " + splitMessage[1] + " degrees.");
+            validatedCommand.append(numbers[i]).append(",");
+            i++;
         }
-        try{
-            final int override = Integer.parseInt(splitMessage[2]);
-            if(override < 0 || override > 1){
-                throw new InvalidCommandException("Command is faulty. Override should be 0 or 1, not " + splitMessage[2] + ".");
-            }
-        } catch (NumberFormatException e){
-            throw new InvalidCommandException("Command is faulty. Override should be 0 or 1, not " + splitMessage[2] + ".");
-        }
+
+        validatedCommand.append(override);
+        return validatedCommand.toString();
     }
 
     // This method is (not yet) used to change the desired command to be within bounds
@@ -233,9 +253,8 @@ public class ServoService {
         else{
             overwrite = 0;
         }
-        final String command = config.getServoNumber(servoEnum) + "," + angle + "," + overwrite;
-        validateCommand(command);
-        publisher.publish(QueueEnum.SERVO, command);
+        final String command = "1," + config.getServoNumber(servoEnum) + "," + angle + "," + overwrite;
+        publisher.publish(QueueEnum.SERVO, validateCommand(command));
         tracker.setCurrentRotation(servoEnum, angle);
     }
 
@@ -274,6 +293,11 @@ public class ServoService {
           }
         }
         tracker.setIsMoving(servoEnum, false);
+    }
+
+    // TODO: Deze
+    public void batchPublish(Map<ServoEnum, Integer> positions, boolean override){
+
     }
 
 }
