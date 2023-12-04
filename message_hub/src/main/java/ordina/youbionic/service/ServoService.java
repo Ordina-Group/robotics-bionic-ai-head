@@ -251,6 +251,11 @@ public class ServoService {
         tracker.setCurrentRotation(servoEnum, angle);
     }
 
+    public void testSlowlyMove() throws InvalidCommandException, InterruptedException, IllegalEnumValueException {
+        slowlyMove(ServoEnum.HEAD_SWIVEL, 50, false, 3, 100);
+        slowlyMove(ServoEnum.HEAD_SWIVEL, 130, false, 3, 100);
+    }
+
     private void slowlyMove(final ServoEnum servoEnum, final int desiredAngle, final boolean override, final int incrementInDegrees, final int stepsInMilliseconds) throws InvalidCommandException, IllegalEnumValueException, InterruptedException {
         if(incrementInDegrees < 0){
             throw new InvalidCommandException("Tried to move the servomotor number " + config.getServoNumber(servoEnum) + " by " + incrementInDegrees + " degrees. It can't be negative");
@@ -288,7 +293,7 @@ public class ServoService {
         tracker.setIsMoving(servoEnum, false);
     }
 
-    public void batchPublish(Map<ServoEnum, Integer> positions, boolean override) throws InvalidCommandException, IllegalEnumValueException {
+    private void batchPublish(final Map<ServoEnum, Integer> positions, final boolean override) throws InvalidCommandException, IllegalEnumValueException {
         StringBuilder cmd = new StringBuilder();
         int amountOfCommands = positions.size();
         cmd.append(amountOfCommands);

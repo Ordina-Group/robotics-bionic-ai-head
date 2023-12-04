@@ -51,4 +51,9 @@ public class ServoController {
         service.shakeNo();
     }
 
+    @GetMapping("/testslow")
+    public void testSlow() throws Exception{
+        service.testSlowlyMove();
+    }
+
 }
