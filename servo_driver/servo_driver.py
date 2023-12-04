@@ -16,7 +16,7 @@ def main():
 			servo = int(instructions.pop(0))
 			angle = int(instructions.pop(0))
 			kit.servo[servo].angle=angle
-			ch.basic_ack(delivery_tag=method.delivery_tag)
+		ch.basic_ack(delivery_tag=method.delivery_tag)
 
 	
 	channel.basic_consume(queue='servo', on_message_callback=callback)

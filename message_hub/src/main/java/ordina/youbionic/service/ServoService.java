@@ -177,6 +177,7 @@ public class ServoService {
             throw new InvalidCommandException("Command is faulty. It has declared to have 0 elements.");
         }
         if(splitMessage.length != (amountOfInstructions * 2) + 2){
+            System.out.println(message);
             throw new InvalidCommandException("Command is faulty. It has " + splitMessage.length + " elements. It needs 1 for the length of the command, 2 for every movable servomotor, and 1 last one for the override. ");
         }
         validatedCommand.append(amountOfInstructions).append(",");
@@ -296,7 +297,7 @@ public class ServoService {
     private void batchPublish(final Map<ServoEnum, Integer> positions, final boolean override) throws InvalidCommandException, IllegalEnumValueException {
         StringBuilder cmd = new StringBuilder();
         int amountOfCommands = positions.size();
-        cmd.append(amountOfCommands);
+        cmd.append(amountOfCommands).append(",");
         for(Map.Entry<ServoEnum, Integer> entry : positions.entrySet()){
             if(!override) {
                 if (tracker.getIsMoving(entry.getKey())) {
@@ -305,7 +306,12 @@ public class ServoService {
             }
             cmd.append(config.getServoNumber(entry.getKey())).append(",").append(entry.getValue()).append(",");
         }
-        cmd.append(override);
+        if(override){
+            cmd.append(1);
+        }
+        else{
+            cmd.append(0);
+        }
         publisher.publish(QueueEnum.SERVO, validateCommand(cmd.toString()));
         for(Map.Entry<ServoEnum, Integer> entry : positions.entrySet()){
             tracker.setCurrentRotation(entry.getKey(), entry.getValue());
