@@ -67,28 +67,18 @@ public class ServoService {
         final Map<ServoEnum, Integer> laughPos1 = Map.of(ServoEnum.MOUTH, 90, ServoEnum.HEAD_TILT, 130);
         final Map<ServoEnum, Integer> laughPos2 = Map.of(ServoEnum.MOUTH, 70, ServoEnum.HEAD_TILT, 115);
         try{
-            for(Map.Entry<ServoEnum, Integer> entry : basePosition.entrySet()){
-                publish(entry.getKey(), entry.getValue(), override);
-            }
+            batchPublish(basePosition, override);
             Thread.sleep(100);
-            for(Map.Entry<ServoEnum, Integer> entry : eyeRoll.entrySet()){
-                publish(entry.getKey(), entry.getValue(), override);
-            }
+            batchPublish(eyeRoll, override);
             Thread.sleep(200);
             closeEyes();
             for(int i = 0; i < 8; i++){
-                for(Map.Entry<ServoEnum, Integer> entry : laughPos1.entrySet()){
-                    publish(entry.getKey(), entry.getValue(), override);
-                }
+                batchPublish(laughPos1, override);
                 Thread.sleep(200);
-                for(Map.Entry<ServoEnum, Integer> entry : laughPos2.entrySet()){
-                    publish(entry.getKey(), entry.getValue(), override);
-                }
+                batchPublish(laughPos2, override);
                 Thread.sleep(200);
             }
-            for(Map.Entry<ServoEnum, Integer> entry : basePosition.entrySet()){
-                publish(entry.getKey(), entry.getValue(), override);
-            }
+            batchPublish(basePosition, override);
         } catch(InvalidCommandException e){
             throw new InvalidCommandException(e.getMessage());
         }
@@ -131,17 +121,20 @@ public class ServoService {
     // This method resets all servomotors to 90 degrees. This is the angle we used during assembly, and should be the neutral resting position for the head.
     public void reset() throws Exception{
         final boolean override = true;
+        Map<ServoEnum, Integer> map = new HashMap<>();
         for(ServoEnum servo : ServoEnum.values()){
-            publish(servo, 90, override);
+            map.put(servo, 90);
         }
+        batchPublish(map, override);
     }
 
     public void rest() throws Exception{
         final boolean override = true;
+        Map<ServoEnum, Integer> map = new HashMap<>();
         for(ServoEnum servo : ServoEnum.values()){
-            int angle = config.getDefaultRotation(servo);
-            publish(servo, angle, override);
+            map.put(servo, config.getDefaultRotation(servo));
         }
+        batchPublish(map, override);
     }
 
     public String configure(final int servo) throws Exception{
@@ -295,9 +288,23 @@ public class ServoService {
         tracker.setIsMoving(servoEnum, false);
     }
 
-    // TODO: Deze
-    public void batchPublish(Map<ServoEnum, Integer> positions, boolean override){
-
+    public void batchPublish(Map<ServoEnum, Integer> positions, boolean override) throws InvalidCommandException, IllegalEnumValueException {
+        StringBuilder cmd = new StringBuilder();
+        int amountOfCommands = positions.size();
+        cmd.append(amountOfCommands);
+        for(Map.Entry<ServoEnum, Integer> entry : positions.entrySet()){
+            if(!override) {
+                if (tracker.getIsMoving(entry.getKey())) {
+                    return;
+                }
+            }
+            cmd.append(entry.getKey()).append(",").append(entry.getValue()).append(",");
+        }
+        cmd.append(override);
+        publisher.publish(QueueEnum.SERVO, validateCommand(cmd.toString()));
+        for(Map.Entry<ServoEnum, Integer> entry : positions.entrySet()){
+            tracker.setCurrentRotation(entry.getKey(), entry.getValue());
+        }
     }
 
 }
