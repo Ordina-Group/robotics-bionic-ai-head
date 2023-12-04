@@ -10,7 +10,7 @@ def main():
 	def callback(ch, method, properties, body):
 		instructions = body.decode().split(',')
 		print(f" [x] Received {instructions}")
-		amountofinstructions = instructions.pop(0)
+		amountofinstructions = int(instructions.pop(0))
 		override = int(instructions.pop(-1))
 		for instruction in range(amountofinstructions):
 			servo = int(instructions.pop(0))

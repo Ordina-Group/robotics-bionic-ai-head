@@ -303,7 +303,7 @@ public class ServoService {
                     return;
                 }
             }
-            cmd.append(entry.getKey()).append(",").append(entry.getValue()).append(",");
+            cmd.append(config.getServoNumber(entry.getKey())).append(",").append(entry.getValue()).append(",");
         }
         cmd.append(override);
         publisher.publish(QueueEnum.SERVO, validateCommand(cmd.toString()));
