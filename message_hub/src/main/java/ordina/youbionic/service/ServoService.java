@@ -252,9 +252,12 @@ public class ServoService {
         tracker.setCurrentRotation(servoEnum, angle);
     }
 
-    public void testSlowlyMove() throws InvalidCommandException, InterruptedException, IllegalEnumValueException {
-        slowlyMove(ServoEnum.HEAD_SWIVEL, 50, false, 3, 100);
-        slowlyMove(ServoEnum.HEAD_SWIVEL, 130, false, 3, 100);
+    public void testSlowlyMove() throws Exception {
+        slowlyMove(ServoEnum.HEAD_SWIVEL, 50, false, 3, 50);
+        slowlyMove(ServoEnum.HEAD_SWIVEL, 130, false, 5, 50);
+        slowlyMove(ServoEnum.HEAD_SWIVEL, 50, false, 7, 50);
+        slowlyMove(ServoEnum.HEAD_SWIVEL, 130, false, 10, 50);
+        rest();
     }
 
     private void slowlyMove(final ServoEnum servoEnum, final int desiredAngle, final boolean override, final int incrementInDegrees, final int stepsInMilliseconds) throws InvalidCommandException, IllegalEnumValueException, InterruptedException {
