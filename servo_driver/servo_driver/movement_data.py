@@ -17,6 +17,10 @@ class Position:
     headPivot: Optional[int]
 
 
+# TODO: Wanneer alle posities hier staan kan er een functie geschreven worden die
+# TODO: ervoor zorgt dat per pose alle values worden opgehaald en de servo's
+# TODO: worden aangestuurd daarmee. Dan kan je per servo vanaf de config de pinnr halen
+# TODO: en de rotaties hieruit halen. Als er 'None' staat, hoeft de servo niet te bewegen
 all90 = Position(90, 90, 90, 90, 90, 90, 90, 90, 90)
 rest = Position(conf.eyeLeft.defaultRotation, conf.eyeRight.defaultRotation, conf.eyeLeftOpen.defaultRotation, conf.eyeRightOpen.defaultRotation, conf.eyesUpDown.defaultRotation, conf.mouth.defaultRotation, conf.headTilt.defaultRotation, conf.headSwivel.defaultRotation, conf.headPivot.defaultRotation)
 closeEyes = Position(conf.eyeLeft.minRotation, conf.eyeRight.maxRotation, None, None, None, None, None, None, None)
