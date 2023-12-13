@@ -36,6 +36,16 @@ public class ServoController {
         service.rest();
     }
 
+    @GetMapping("/closeeyes")
+    public void closeEyes() throws Exception{
+        service.closeEyes();
+    }
+
+    @GetMapping("/openeyes")
+    public void openEyes() throws Exception{
+        service.openEyes();
+    }
+
     @GetMapping("/blink")
     public void blink() throws Exception{
         service.blink();
@@ -49,11 +59,6 @@ public class ServoController {
     @GetMapping("/no")
     public void no() throws Exception{
         service.shakeNo();
-    }
-
-    @GetMapping("/testslow")
-    public void testSlow() throws Exception{
-        service.testSlowlyMove();
     }
 
 }
