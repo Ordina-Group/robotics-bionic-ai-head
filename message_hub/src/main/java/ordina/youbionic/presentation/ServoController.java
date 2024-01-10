@@ -26,9 +26,14 @@ public class ServoController {
         return service.configure(servo);
     }
 
-    @GetMapping("/manual/{servo}/{angle}")
-    public String manual(@PathVariable int servo, @PathVariable int angle) throws Exception{
+    @GetMapping("/manualnumber/{servo}/{angle}")
+    public String manualWithNumber(@PathVariable int servo, @PathVariable int angle) throws Exception{
         return service.manual(servo, angle);
+    }
+
+    @GetMapping("/manualname/{servo}/{angle}")
+    public String manualWithName(@PathVariable String servo, @PathVariable int angle) throws Exception{
+        return service.manualWithName(servo, angle);
     }
 
     @GetMapping("/rest")
