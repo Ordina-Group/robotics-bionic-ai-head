@@ -59,9 +59,14 @@ public class ServoService {
         return "Moved servo number: " + servo + ". If nothing moved, something is broken.";
     }
 
-    public String manual(final int servo, final int angle) throws Exception{
-        publish("manual:" + servo + ":" + angle);
+    public String manualWithNumber(final int servo, final int angle) throws Exception{
+        publish("manualWithNumber:" + servo + ":" + angle);
         return "Successfully moved servomotor number " + servo + " to " + angle + " degrees.";
+    }
+
+    public String manualWithName(final String servo, final int angle) throws Exception{
+        publish("manualWithName:" + servo + ":" + angle);
+        return "Successfully moved servomotor with name " + servo + " to " + angle + " degrees.";
     }
 
     private void publish(final String message) throws IllegalEnumValueException {
