@@ -2,7 +2,7 @@ import os
 import pika
 import sys
 import sounddevice as sd
-import numpy as np
+import soundfile as sf
 
 def main():
     kit = ServoKit(channels=16)
@@ -11,13 +11,13 @@ def main():
     channel.queue_declare(queue='servo_output')
     
     # TODO - specify audio file path
-    audio_file_path = 'your_audio_file.wav'
+    audio_file_path = 'audio_file.wav'
     
     def callback(ch, method, properties, body):
         command = body.decode.split(':')
         if command[0] == 'play_sound':
-            audio_data, _ = sd.read(audio_file_path, dtype=np.int16)
-            sd.play(audio_data, samplerate=44100)
+            audio_data, fs = sd.read(audio_file_path, dtype='float32')
+            sd.play(audio_data, fs)
             sd.wait()
         elif command[0] == 'speak':
             # Add functionality to generate text-to-speech and play the sound here
