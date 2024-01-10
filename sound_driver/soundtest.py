@@ -4,9 +4,8 @@ import sounddevice as sd
 import soundfile as sf
 
 def main():
-    # TODO - specify audio file path
     audio_file_path = 'oof.wav'
-    audio_data, fs = sd.read(audio_file_path, dtype='float32')
+    audio_data, fs = sf.read(audio_file_path, dtype='float32')
     sd.play(audio_data, fs)
     sd.wait()
     
