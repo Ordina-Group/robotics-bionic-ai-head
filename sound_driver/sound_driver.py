@@ -3,6 +3,7 @@ import pika
 import sys
 import sounddevice as sd
 import soundfile as sf
+import numpy
 
 def main():
     kit = ServoKit(channels=16)
