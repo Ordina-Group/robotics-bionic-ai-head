@@ -17,7 +17,7 @@ def main():
     def callback(ch, method, properties, body):
         command = body.decode.split(':')
         if command[0] == 'play_sound':
-            audio_data, fs = sd.read(audio_file_path, dtype='float32')
+            audio_data, fs = sf.read(audio_file_path, dtype='float32')
             sd.play(audio_data, fs)
             sd.wait()
         elif command[0] == 'speak':
