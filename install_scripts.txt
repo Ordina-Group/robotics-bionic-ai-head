@@ -1,5 +1,7 @@
 sudo apt update
 sudo apt install wget maven python3.11 rabbitmq-server audacity portaudio19-dev
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install nodejs -y
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
 wget https://download.oracle.com/java/21/latest/jdk-21_linux-aarch64_bin.tar.gz
