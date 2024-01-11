@@ -16,36 +16,6 @@ def main():
     channel = connection.channel()
     channel.queue_declare(queue='servo')
     
-    # Here we define what possible commands can be sent to the driver.
-    # If future developers add new methods, make sure to add them to this dictionary.
-    commands = {
-        'rest': rest,
-        'close_eyes': close_eyes,
-        'open_eyes': open_eyes,
-        'all90': all90,
-        'nod_yes': nod_yes,
-        'shake_no': shake_no,
-        'blink': blink,
-        'laugh': laugh
-    }
-
-    def callback(ch, method, properties, body):
-        instructions = body.decode().split(':')
-        print(f" [x] Received {instructions}")
-        if instructions[0] == "speak":
-            speak(instructions[1])
-        elif instructions[0] in commands:
-            commands[instructions[0]]()
-        elif instructions[0] == "manualWithName":
-            manualWithName(instructions[1], instructions[2])
-        elif instructions[0] == "manualWithNumber":
-            manualWithNumber(instructions[1], instructions[2])
-        elif instructions[0] == "config":
-            config(instructions[1])
-        else:
-            print("Unknown command: %s" % (instructions[0]))
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    
     def move(pos):
         for field, value in asdict(pos).items:
             if value is not None:
@@ -132,7 +102,37 @@ def main():
         for servoMotor in servoMotors:
             if servoMotorName == servoMotor.name:
                 return servoMotor.pinNr
-
+    
+    # Here we define what possible commands can be sent to the driver.
+    # If future developers add new methods, make sure to add them to this dictionary.
+    commands = {
+        'rest': rest,
+        'close_eyes': close_eyes,
+        'open_eyes': open_eyes,
+        'all90': all90,
+        'nod_yes': nod_yes,
+        'shake_no': shake_no,
+        'blink': blink,
+        'laugh': laugh
+    }
+    
+    def callback(ch, method, properties, body):
+        instructions = body.decode().split(':')
+        print(f" [x] Received {instructions}")
+        if instructions[0] == "speak":
+            speak(instructions[1])
+        elif instructions[0] in commands:
+            commands[instructions[0]]()
+        elif instructions[0] == "manualWithName":
+            manualWithName(instructions[1], instructions[2])
+        elif instructions[0] == "manualWithNumber":
+            manualWithNumber(instructions[1], instructions[2])
+        elif instructions[0] == "config":
+            config(instructions[1])
+        else:
+            print("Unknown command: %s" % (instructions[0]))
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    
     channel.basic_consume(queue='servo', on_message_callback=callback)
 
     print(' [*] Waiting for messages. To exit, press CTRL+C')
