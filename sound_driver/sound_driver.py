@@ -9,7 +9,7 @@ def main():
     kit = ServoKit(channels=16)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
-    channel.queue_declare(queue='servo_output')
+    channel.queue_declare(queue='audio_output')
     
     # TODO - specify audio file path
     audio_file_path = 'audio_file.wav'
@@ -27,7 +27,7 @@ def main():
             print("Invalid command: %s" % (command[0]))
         ch.basic_ack(delivery_tag=method.delivery_tag)
     
-    channel.basic_consume(queue='servo', on_message_callback=callback)
+    channel.basic_consume(queue='audio_output', on_message_callback=callback)
 
     print(' [*] Waiting for messages. To exit, press CTRL+C')
     channel.start_consuming()
