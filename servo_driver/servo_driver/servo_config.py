@@ -7,7 +7,7 @@ class ServoMotor:
     defaultRotation: int
     minRotation: int
     maxRotation: int
-    name: String
+    name: str
 
 
 eyeLeft = ServoMotor(pinNr=0, defaultRotation=100, minRotation=80, maxRotation=115, name='eyeLeft')
