@@ -14,17 +14,17 @@ def main():
     audio_file_path = 'audio_file.wav'
     
     def callback(ch, method, properties, body):
-        command = body.decode.split(':')
-        if command[0] == 'play_sound':
+        instructions = body.decode().split(':')
+        if instructions[0] == 'play_sound':
             audio_data, fs = sf.read(audio_file_path, dtype='float32')
             sd.play(audio_data, fs)
             sd.wait()
-        elif command[0] == 'speak':
+        elif instructions[0] == 'speak':
             print("speak")
             # Add functionality to generate text-to-speech and play the sound here
-            # using command[1] as the text to be said.
+            # using instructions[1] as the text to be said.
         else:
-            print("Invalid command: %s" % (command[0]))
+            print("Invalid command: %s" % (instructions[0]))
         ch.basic_ack(delivery_tag=method.delivery_tag)
     
     channel.basic_consume(queue='audio_output', on_message_callback=callback)
