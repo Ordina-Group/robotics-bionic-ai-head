@@ -130,7 +130,7 @@ def main():
             manualWithName(instructions[1], instructions[2])
         elif instructions[0] == "manualWithNumber":
             manualWithNumber(instructions[1], instructions[2])
-        elif instructions[0] == "config":
+        elif instructions[0] == "configure":
             config(instructions[1])
         else:
             print("Unknown command: %s" % (instructions[0]))
