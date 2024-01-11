@@ -5,6 +5,7 @@ import servo_config as config
 from adafruit_servokit import ServoKit
 import movement_data
 from dataclasses import dataclass, fields, asdict
+import time
 # import asyncio
 # import aio_pika
 # I have these commented out, as to indicate a desire to make everything asynchronous. This way, the head can move more naturally. As for now, it's a sequential driver, as I'm struggling to understand asynchronity.
@@ -17,7 +18,7 @@ def main():
     channel.queue_declare(queue='servo')
     
     def move(pos):
-        for field, value in asdict(pos).items:
+        for field, value in asdict(pos).items():
             if value is not None:
                 pinNumber = findPinNumber(field)
                 kit.servo[pinNumber].angle = value
@@ -39,9 +40,9 @@ def main():
         i = 0
         while i < 5:
             move(movement_data.noddingYes1)
-            sleep(0.4)
+            time.sleep(0.4)
             move(movement_data.noddingYes2)
-            sleep(0.4)
+            time.sleep(0.4)
         open_eyes()
 
     def shake_no():
@@ -49,28 +50,28 @@ def main():
         i = 0
         while i < 5:
             move(movement_data.shakingNo1)
-            sleep(0.4)
+            time.sleep(0.4)
             move(movement_data.shakingNo2)
-            sleep(0.4)
+            time.sleep(0.4)
         open_eyes()
 
     def blink():
         close_eyes()
-        sleep(0.25)
+        time.sleep(0.25)
         open_eyes()
 
     def laugh():
         rest()
-        sleep(0.1)
+        time.sleep(0.1)
         move(movement_data.laughingEyeRoll)
-        sleep(0.2)
+        time.sleep(0.2)
         close_eyes()
         i = 0
         while i < 8:
             move(movement_data.laughingPosition1)
-            sleep(0.2)
+            time.sleep(0.2)
             move(movement_data.laughingPosition2)
-            sleep(0.2)
+            time.sleep(0.2)
             i += 1
         rest()
 
@@ -85,9 +86,9 @@ def main():
         i = 0
         while i < 2:
             kit.servo[servo_number].angle = 80
-            sleep(0.5)
+            time.sleep(0.5)
             kit.servo[servo_number].angle = 110
-            sleep(0.5)
+            time.sleep(0.5)
             i += 1
         kit.servo[servo_number].angle = 90
     
@@ -95,7 +96,7 @@ def main():
         # If the robot head were to ever speak, this method would make that happen. 
         # However, as this is outside of the scope of this current assignment,
         # it is just an empty method for now.
-        sleep(2)
+        time.sleep(2)
         
     def findPinNumber(servoMotorName):
         servoMotors = [config.eyeLeft, config.eyeRight, config.eyeLeftOpen, config.eyeRightOpen, config.eyesUpDown, config.mouth, config.headTilt, config.headSwivel, config.headPivot]
