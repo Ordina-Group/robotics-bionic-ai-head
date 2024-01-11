@@ -6,7 +6,6 @@ import soundfile as sf
 import numpy
 
 def main():
-    kit = ServoKit(channels=16)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
     channel.queue_declare(queue='audio_output')
@@ -21,6 +20,7 @@ def main():
             sd.play(audio_data, fs)
             sd.wait()
         elif command[0] == 'speak':
+            print("speak")
             # Add functionality to generate text-to-speech and play the sound here
             # using command[1] as the text to be said.
         else:
