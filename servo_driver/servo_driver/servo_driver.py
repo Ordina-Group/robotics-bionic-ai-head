@@ -43,6 +43,7 @@ def main():
             time.sleep(0.4)
             move(movement_data.noddingYes2)
             time.sleep(0.4)
+            i += 1
         open_eyes()
 
     def shake_no():
@@ -53,6 +54,7 @@ def main():
             time.sleep(0.4)
             move(movement_data.shakingNo2)
             time.sleep(0.4)
+            i += 1
         open_eyes()
 
     def blink():
