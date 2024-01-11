@@ -2,6 +2,7 @@ package ordina.youbionic.presentation;
 
 import lombok.RequiredArgsConstructor;
 import ordina.youbionic.service.ServoService;
+import ordina.youbionic.service.SoundService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ServoController {
     private final ServoService service;
+    private final SoundService soundService;
 
     @GetMapping("/reset")
     public void reset() throws Exception{
@@ -65,5 +67,9 @@ public class ServoController {
     public void no() throws Exception{
         service.shakeNo();
     }
+
+    @GetMapping("/sound")
+    public void playSound() throws Exception{
+        soundService.playSound();
 
 }
