@@ -4,7 +4,9 @@ As it is currently still in development, there's not one application to straight
 Instead, try <br> 
 * Run /message_hub/src/main/java/ordina/youbionic/YouBionicApplication.java 
 * Then, once that it up and running, run /servo_driver/servo_driver.py
-* Once they are both active, navigate to localhost:8080/ to try out the endpoints.
+* Then, run /sound_driver/sound_driver.py
+* Then, start the front-end by running a terminal and navigating to svelte-app and running 'npm run dev'
+* Once they are both active, navigate to localhost:8080/ to try out the endpoints, or to whatever port Svelte will run on to make calls through the front-end
 
 
 > Current endpoints are 
@@ -12,9 +14,15 @@ Instead, try <br>
 - /laugh, 
 - /yes, 
 - /no, 
-- /blink, 
-- /manual/{servonumber}/{angle}, 
-- /config{servonumber}
+- /blink,
+- /closeeyes,
+- /openeyes,
+- /rest,
+- /reset,
+- /sound,
+- /manualnumber/{servonumber}/{angle},
+- /manualname/{servoname}/{angle}
+- /configure/{servonumber}
 >[!IMPORTANT]
 > {servonumber} is either 0, 1, 2, 3, 4, 5, 13, 14 or 15 <br>
 > And angle is anything between 0-180.
