@@ -7,6 +7,8 @@
       on:mouseover
       on:mouseenter
       on:mouseleave
+      on:focus
+      on:blur
     {...buttonProps}>
       <slot/>
     </button>
