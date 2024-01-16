@@ -1,6 +1,9 @@
 import sounddevice as sd
 import numpy as np
 import pika
+import scipy
+import sys
+import os
 
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -10,10 +13,10 @@ def main():
     def threshold_met():
         channel.basic_publish(exchange='', routing_key='audio_input', body='Audio detected')
         
-    frequency_threshold = 1000
+    frequency_threshold = 3000
     while True:
-        data = sd.rec(1024, 44100, channels=2)
-        frequencies, times, spectrogram = stft(data, 44100, nperseg=1024)
+        data = sd.rec(1024, 44100, channels=2, blocking=True)
+        frequencies, times, spectrogram = stft(data[:, 0], 44100, nperseg=1024)
         max_frequency = np.abs(frequencies[np.argmax(spectrogram)])
         if max_frequency > frequency_threshold:
             threshold_met()
