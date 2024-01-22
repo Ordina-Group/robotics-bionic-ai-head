@@ -71,5 +71,5 @@ public class ServoController {
     @GetMapping("/sound")
     public void playSound() throws Exception{
         soundService.playSound();
-
+    }
 }
