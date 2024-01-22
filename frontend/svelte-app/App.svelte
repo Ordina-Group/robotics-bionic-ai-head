@@ -16,6 +16,9 @@
     	'headSwivel',
     	'headPivot'
 	 ]
+	let passiveColor = '#007f92';
+	let textColor = '#3da4bf';
+	
 	
 	function doConfig () {
 	    fetch('http://localhost:8080/configure/{$configNumber}')
@@ -68,51 +71,52 @@
 
 <main>
 	<h1>YouBionic Robot Controls</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-	<Button class="primary lg" on:click={doCloseEyes}> Close Eyes </Button>
-	<Button class="primary lg" on:click={doOpenEyes}> Open Eyes </Button>
+	<Button class="primary" on:click={doCloseEyes}> Close Eyes </Button>
+	<Button class="primary" on:click={doOpenEyes}> Open Eyes </Button>
 	<br>
-	<Button class="primary lg" on:click={doNodYes}> Nod Yes </Button>
-	<Button class="primary lg" on:click={doShakeNo}> Shake No </Button>
+	<Button class="primary" on:click={doNodYes}> Nod Yes </Button>
+	<Button class="primary" on:click={doShakeNo}> Shake No </Button>
 	<br>
-	<Button class="primary lg" on:click={doRest}> Rest </Button>
-	<Button class="primary lg" on:click={doBlink}> Blink </Button>
+	<Button class="primary" on:click={doRest}> Rest </Button>
+	<Button class="primary" on:click={doBlink}> Blink </Button>
 	<br>
-	<Button class="primary lg" on:click={doLaugh}> Laugh </Button>
-	<Button class="primary lg" on:click={doReset}> Reset </Button>
+	<Button class="primary" on:click={doLaugh}> Laugh </Button>
+	<Button class="primary" on:click={doReset}> Reset </Button>
 	<br>
-	<Button class="primary lg" on:click={doPlaySound}> Play Sound </Button>
+	<Button class="primary" on:click={doPlaySound}> Play Sound </Button>
 	<br>
 	<input type='number' bind:value={configNumber} min=0 max=15/>
 	<br>
-	<Button class="primary lg" on:click={doConfig}> Config </Button>
+	<Button class="primary" on:click={doConfig}> Config </Button>
 	<br>
 	<input type='number' bind:value={manualNumberServo} min=0 max=15 />
 	<input type='number' bind:value={manualNumberAngle} min=0 max=180/>
 	<br>
-	<Button class="primary lg" on:click={doManualNumber}> Manual Input By Number </Button>
+	<Button class="primary" on:click={doManualNumber}> Manual Input By Number </Button>
 	<br>
 	<select bind:value={selectedServoName}>
 	    {#each servoNameOptions as value}<option {value}>{value}</option>{/each}
     </select>
     <input type='number' bind:value={manualNameAngle} min=0 max=180 />
     <br>
-    <Button class="primary lg" on:click={doManualName}> Manual Input by Name </Button>
+    <Button class="primary" on:click={doManualName}> Manual Input by Name </Button>
 </main>
 
 <style>
 	main {
 		text-align: center;
 		padding: 1em;
-		max-width: 240px;
+		max-width: 440px;
 		margin: 0 auto;
+		background-color: #58595b;
 	}
 
 	h1 {
-		color: #ff3e00;
+		color: #f58220;
 		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
+		font-family: 'Roboto Condensed';
 	}
 
 	@media (min-width: 640px) {
