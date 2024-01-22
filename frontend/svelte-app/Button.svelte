@@ -32,8 +32,22 @@
 	width: 10.25em;
   }
   
+  .medium {
+	width: 6.75em;
+  }
+  
+  .semiLage{
+	width: 8em;
+  }
+  
   .small {
 	width: 5em;
+  }
+  
+  .reset{
+	width: 7em;
+	height: 4em;
+	align: center;
   }
 
   .primary:hover {
