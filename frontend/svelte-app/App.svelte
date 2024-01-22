@@ -22,6 +22,9 @@
 		max-width: 440px;
 		margin: 0 auto;
 		background-color: #58595b;
+		border: solid;
+		border-radius: 10px;
+		border-color: #f58220;
 	}
 
 	h1 {
@@ -30,6 +33,7 @@
 		font-size: 4em;
 		font-weight: 100;
 		font-family: 'Roboto Condensed';
+		margin: 0;
 	}
 
 	@media (min-width: 640px) {
