@@ -26,9 +26,16 @@
 	border-width: 2px;
 	margin: 2px;
 	font-size: 2em;
-	width: 5em;
 	padding-right: 1em;
 	padding-left: 1em;
+  }
+  
+  .large {
+	width: 10.25em;
+  }
+  
+  .small {
+	width: 5em;
   }
 
   .primary:hover {
