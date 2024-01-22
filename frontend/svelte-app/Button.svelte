@@ -1,6 +1,4 @@
 <script>
-  let isHovered = false;
-
   let buttonProps = {
   class:[$$restProps.class]
   }
