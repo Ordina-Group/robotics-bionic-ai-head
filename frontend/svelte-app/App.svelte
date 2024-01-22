@@ -85,19 +85,26 @@
 	<br>
 	<Button class="primary" on:click={doPlaySound}> Play Sound </Button>
 	<br>
+	<label>Servomotor Number (0-15)</label>
 	<input type='number' bind:value={configNumber} min=0 max=15/>
 	<br>
 	<Button class="primary" on:click={doConfig}> Config </Button>
 	<br>
+	<label>Servomotor Number (0-15)</label>
 	<input type='number' bind:value={manualNumberServo} min=0 max=15 />
+	<label>Desired Angle</label>
 	<input type='number' bind:value={manualNumberAngle} min=0 max=180/>
+	<label>(min 0, max 180)</label>
 	<br>
 	<Button class="primary" on:click={doManualNumber}> Manual Input By Number </Button>
 	<br>
+	<label>Servomotor</label>
 	<select bind:value={selectedServoName}>
 	    {#each servoNameOptions as value}<option {value}>{value}</option>{/each}
     </select>
+	<label>Desired Angle</label>
     <input type='number' bind:value={manualNameAngle} min=0 max=180 />
+	<label>(min 0, max 180)</label>
     <br>
     <Button class="primary" on:click={doManualName}> Manual Input by Name </Button>
 </main>
