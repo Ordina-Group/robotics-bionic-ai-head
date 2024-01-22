@@ -30,7 +30,7 @@ public class ServoController {
 
     @GetMapping("/manualnumber/{servo}/{angle}")
     public String manualWithNumber(@PathVariable int servo, @PathVariable int angle) throws Exception{
-        return service.manual(servo, angle);
+        return service.manualWithNumber(servo, angle);
     }
 
     @GetMapping("/manualname/{servo}/{angle}")
