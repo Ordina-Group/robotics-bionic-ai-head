@@ -71,24 +71,24 @@
 
 <main>
 	<h1>YouBionic Robot Controls</h1>
-	<Button class="primary" on:click={doCloseEyes}> Close Eyes </Button>
-	<Button class="primary" on:click={doOpenEyes}> Open Eyes </Button>
+	<Button class="primary small" on:click={doOpenEyes}> Open Eyes </Button>
+	<Button class="primary small" on:click={doCloseEyes}> Close Eyes </Button>
 	<br>
-	<Button class="primary" on:click={doNodYes}> Nod Yes </Button>
-	<Button class="primary" on:click={doShakeNo}> Shake No </Button>
+	<Button class="primary small" on:click={doNodYes}> Nod Yes </Button>
+	<Button class="primary small" on:click={doShakeNo}> Shake No </Button>
 	<br>
-	<Button class="primary" on:click={doRest}> Rest </Button>
-	<Button class="primary" on:click={doBlink}> Blink </Button>
+	<Button class="primary small" on:click={doRest}> Rest </Button>
+	<Button class="primary small" on:click={doBlink}> Blink </Button>
 	<br>
-	<Button class="primary" on:click={doLaugh}> Laugh </Button>
-	<Button class="primary" on:click={doReset}> Reset </Button>
+	<Button class="primary small" on:click={doLaugh}> Laugh </Button>
+	<Button class="primary small" on:click={doReset}> Reset </Button>
 	<br>
-	<Button class="primary" on:click={doPlaySound}> Play Sound </Button>
+	<Button class="primary large" on:click={doPlaySound}> Play Sound </Button>
 	<br>
 	<label>Servomotor Number (0-15)</label>
 	<input type='number' bind:value={configNumber} min=0 max=15/>
 	<br>
-	<Button class="primary" on:click={doConfig}> Config </Button>
+	<Button class="primary small" on:click={doConfig}> Config </Button>
 	<br>
 	<label>Servomotor Number (0-15)</label>
 	<input type='number' bind:value={manualNumberServo} min=0 max=15 />
@@ -96,7 +96,7 @@
 	<input type='number' bind:value={manualNumberAngle} min=0 max=180/>
 	<label>(min 0, max 180)</label>
 	<br>
-	<Button class="primary" on:click={doManualNumber}> Manual Input By Number </Button>
+	<Button class="primary large" on:click={doManualNumber}> Manual Input By Number </Button>
 	<br>
 	<label>Servomotor</label>
 	<select bind:value={selectedServoName}>
@@ -106,7 +106,7 @@
     <input type='number' bind:value={manualNameAngle} min=0 max=180 />
 	<label>(min 0, max 180)</label>
     <br>
-    <Button class="primary" on:click={doManualName}> Manual Input by Name </Button>
+    <Button class="primary large" on:click={doManualName}> Manual Input by Name </Button>
 </main>
 
 <style>
