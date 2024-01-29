@@ -35,6 +35,12 @@ def main():
     def all90():
         move(movement_data.all90)
 
+    def sleep():
+        move(movement_data.sleep)
+
+    def sus():
+        move(movement_data.sus)
+
     def nod_yes():
         close_eyes()
         i = 0
@@ -116,7 +122,9 @@ def main():
         'nod_yes': nod_yes,
         'shake_no': shake_no,
         'blink': blink,
-        'laugh': laugh
+        'laugh': laugh,
+        'sleep': sleep,
+        'sus': sus
     }
     
     def callback(ch, method, properties, body):
