@@ -62,13 +62,13 @@ openEyes = Position(
     headPivot=None
 )
 laughingEyeRoll = Position(
-    eyeLeft=110,
-    eyeRight=70,
+    eyeLeft=conf.eyeLeft.defaultRotation,
+    eyeRight=conf.eyeRight.defaultRotation,
     eyeLeftOpen=None,
     eyeRightOpen=None,
-    eyesUpDown=70,
+    eyesUpDown=conf.eyesUpDown.minRotation,
     mouth=None,
-    headTilt=120,
+    headTilt=conf.headTilt.maxRotation,
     headSwivel=None,
     headPivot=None
 )
@@ -78,8 +78,8 @@ laughingPosition1 = Position(
     eyeLeftOpen=None,
     eyeRightOpen=None,
     eyesUpDown=None,
-    mouth=90,
-    headTilt=130,
+    mouth=conf.mouth.defaultRotation,
+    headTilt=conf.headTilt.maxRotation,
     headSwivel=None,
     headPivot=None
 )
@@ -89,8 +89,8 @@ laughingPosition2 = Position(
     eyeLeftOpen=None,
     eyeRightOpen=None,
     eyesUpDown=None,
-    mouth=70,
-    headTilt=115,
+    mouth=(conf.mouth.defaultRotation + 20),
+    headTilt=(conf.headTilt.maxRotation - 10),
     headSwivel=None,
     headPivot=None
 )
@@ -101,7 +101,7 @@ noddingYes1 = Position(
     eyeRightOpen=None,
     eyesUpDown=None,
     mouth=None,
-    headTilt=80,
+    headTilt=conf.headTilt.minRotation,
     headSwivel=None,
     headPivot=None
 )
@@ -112,7 +112,7 @@ noddingYes2 = Position(
     eyeRightOpen=None,
     eyesUpDown=None,
     mouth=None,
-    headTilt=130,
+    headTilt=conf.headTilt.maxRotation,
     headSwivel=None,
     headPivot=None
 )
@@ -124,7 +124,7 @@ shakingNo1 = Position(
     eyesUpDown=None,
     mouth=None,
     headTilt=None,
-    headSwivel=110,
+    headSwivel=conf.headSwivel.minRotation,
     headPivot=None
 )
 shakingNo2 = Position(
@@ -135,6 +135,28 @@ shakingNo2 = Position(
     eyesUpDown=None,
     mouth=None,
     headTilt=None,
-    headSwivel=80,
+    headSwivel=conf.headSwivel.maxRotation,
     headPivot=None
+)
+sleeping = Position(
+    eyeLeft=conf.eyeLeft.defaultRotation,
+    eyeRight=conf.eyeRight.defaultRotation,
+    eyeLeftOpen=conf.eyeLeftOpen.minRotation,
+    eyeRightOpen=conf.eyeRightOpen.maxRotation,
+    eyesUpDown=conf.eyesUpDown.maxRotation,
+    mouth=conf.mouth.minRotation,
+    headTilt=conf.headTilt.minRotation,
+    headSwivel=None,
+    headPivot=None
+)
+sus = Position(
+    eyeLeft=conf.eyeLeft.defaultRotation,
+    eyeRight=conf.eyeRight.defaultRotation,
+    eyeLeftOpen=(conf.eyeLeftOpen.minRotation + 20),
+    eyeRightOpen=(conf.eyeRightOpen.maxRotation - 20),
+    eyesUpDown=(conf.eyesUpDown.defaultRotation + 10),
+    mouth=conf.mouth.minRotation,
+    headTilt=None,
+    headSwivel=(conf.headSwivel.minRotation + 10),
+    headPivot=(conf.headPivot.minRotation + 10)
 )
