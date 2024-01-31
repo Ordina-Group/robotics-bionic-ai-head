@@ -1,23 +1,19 @@
 import sounddevice as sd
 import numpy as np
-import scipy
-import sys
-import os
-from time import sleep
+# import pika
 
 def main():
     def threshold_met():
         print('Threshold met!')
 
-    frequency_threshold = 2000
+    frequency_threshold = 1000
     while True:
-        data = sd.rec(1024, 44100, channels=2, blocking=True)
-        frequencies, times, spectrogram = scipy.signal.stft(data[:, 0], 44100, nperseg=1024)
+        data = sd.rec(1024, 44100, channels=2)
+        frequencies, times, spectrogram = stft(data, 44100, nperseg=1024)
         max_frequency = np.abs(frequencies[np.argmax(spectrogram)])
-        print("Frequency: " + str(max_frequency))
+        print(max_frequency)
         if max_frequency > frequency_threshold:
             threshold_met()
-            print("Frequency")
             sleep(1)
     
 

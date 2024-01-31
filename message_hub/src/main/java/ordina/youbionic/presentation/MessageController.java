@@ -9,67 +9,85 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class ServoController {
-    private final ServoService service;
+public class MessageController {
+    private final ServoService servoService;
     private final SoundService soundService;
 
     @GetMapping("/reset")
     public void reset() throws Exception{
-        service.reset();
+        servoService.reset();
     }
 
     @GetMapping("/laugh")
     public void laugh() throws Exception{
-        service.laugh();
+        servoService.laugh();
+        soundService.laugh();
     }
 
     @GetMapping("/configure/{servo}")
     public String configure(@PathVariable int servo) throws Exception{
-        return service.configure(servo);
+        return servoService.configure(servo);
     }
 
     @GetMapping("/manualnumber/{servo}/{angle}")
     public String manualWithNumber(@PathVariable int servo, @PathVariable int angle) throws Exception{
-        return service.manualWithNumber(servo, angle);
+        return servoService.manualWithNumber(servo, angle);
     }
 
     @GetMapping("/manualname/{servo}/{angle}")
     public String manualWithName(@PathVariable String servo, @PathVariable int angle) throws Exception{
-        return service.manualWithName(servo, angle);
+        return servoService.manualWithName(servo, angle);
     }
 
     @GetMapping("/rest")
     public void rest() throws Exception{
-        service.rest();
+        servoService.rest();
     }
 
     @GetMapping("/closeeyes")
     public void closeEyes() throws Exception{
-        service.closeEyes();
+        servoService.closeEyes();
+    }
+
+    @GetMapping("/sleep")
+    public void sleep() throws Exception{
+        servoService.sleep();
+    }
+
+    @GetMapping("/demo")
+    public void demo() throws Exception{
+        servoService.demo();
+		soundService.demo();
+    }
+
+    @GetMapping("/sus")
+    public void sus() throws Exception{
+        servoService.sus();
     }
 
     @GetMapping("/openeyes")
     public void openEyes() throws Exception{
-        service.openEyes();
+        servoService.openEyes();
     }
 
     @GetMapping("/blink")
     public void blink() throws Exception{
-        service.blink();
+        servoService.blink();
     }
 
     @GetMapping("/yes")
     public void yes() throws Exception{
-        service.nodYes();
+        servoService.nodYes();
     }
 
     @GetMapping("/no")
     public void no() throws Exception{
-        service.shakeNo();
+        servoService.shakeNo();
     }
 
     @GetMapping("/sound")
     public void playSound() throws Exception{
         soundService.playSound();
     }
+
 }

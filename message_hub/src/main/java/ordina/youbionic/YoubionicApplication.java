@@ -11,9 +11,13 @@ public class YoubionicApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(YoubionicApplication.class, args);
-//		pythonController.startPython();
 	}
 
+//	@PostConstruct
+//	public void onStartup(){
+//		pythonController.startPython();
+//	}
+//
 //	@PreDestroy
 //	public void onExit(){
 //		pythonController.killPython();
@@ -22,7 +26,4 @@ public class YoubionicApplication {
 //	public void restartPython(){
 //		pythonController.restartPython();
 //	}
-
-
-
 }

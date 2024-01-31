@@ -10,12 +10,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ServoService {
     private final RabbitMQPublisher publisher;
-//    private final ServoTracker tracker;
 
     public ServoService(){
         try {
             this.publisher = new RabbitMQPublisher();
-//            this.tracker = new ServoTracker();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -33,8 +31,20 @@ public class ServoService {
         publish("blink");
     }
 
+    public void demo() throws Exception{
+        publish("demo");
+    }
+
     public void laugh() throws Exception{
         publish("laugh");
+    }
+
+    public void sleep() throws Exception{
+        publish("sleep");
+    }
+
+    public void sus() throws Exception{
+        publish("sus");
     }
 
     public void nodYes() throws Exception{
@@ -72,7 +82,6 @@ public class ServoService {
     private void publish(final String message) throws IllegalEnumValueException {
         publisher.publish(QueueEnum.SERVO, message);
     }
-
 
 //    private void slowlyMove(final ServoEnum servoEnum, final int desiredAngle, final boolean override, final int incrementInDegrees, final int stepsInMilliseconds) throws InvalidCommandException, IllegalEnumValueException, InterruptedException {
 //        if(incrementInDegrees < 0){

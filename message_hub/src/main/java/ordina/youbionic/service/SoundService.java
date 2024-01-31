@@ -19,9 +19,18 @@ public class SoundService {
         }
     }
 
-    public void playSound(){
-      publish("play_sound");
+    public void demo() throws Exception{
+        publish("demo");
+    }
 
+    public void laugh() throws Exception{
+        publish("laugh");
+    }
+	
+	public void playSound() throws Exception{
+        publish("play_sound");
+    }
+	
     private void publish(final String message) throws IllegalEnumValueException {
         publisher.publish(QueueEnum.AUDIO_OUTPUT, message);
     }

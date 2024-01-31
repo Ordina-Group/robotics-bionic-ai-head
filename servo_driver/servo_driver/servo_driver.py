@@ -2,6 +2,7 @@ import os
 import pika
 import sys
 import servo_config as config
+from random import choice
 from adafruit_servokit import ServoKit
 import movement_data
 from dataclasses import dataclass, fields, asdict
@@ -20,8 +21,9 @@ def main():
     def move(pos):
         for field, value in asdict(pos).items():
             if value is not None:
-                pinNumber = findPinNumber(field)
-                kit.servo[pinNumber].angle = value
+                servoDetails = findPinNumber(field)
+                if not value < servoDetails[1] and not value > servoDetails[2]:
+                    kit.servo[servoDetails[0]].angle = value
 
     def rest():
         move(movement_data.rest)
@@ -40,6 +42,47 @@ def main():
 
     def sus():
         move(movement_data.sus)
+
+    def talk(duration):
+        i = 0
+        options = [movement_data.mouthDefault, movement_data.mouthOpen1, movement_data.mouthOpen2, movement_data.mouthOpen3]
+        while i < duration:
+            move(choice(options))
+            i += 1
+            time.sleep(0.1)
+        move(movement_data.mouthShut)
+
+    def demo():
+        rest()
+        time.sleep(3.5)
+        blink()
+        time.sleep(0.1)
+        blink()
+        move(movement_data.mouthOpen2)
+        time.sleep(0.1)
+        move(movement_data.mouthShut)
+        time.sleep(0.3)
+        blink()
+        talk(7)
+        time.sleep(0.3)
+        talk(8)
+        time.sleep(0.2)
+        talk(7)
+        blink()
+        time.sleep(0.1)
+        talk(6)
+        time.sleep(0.2)
+        talk(6)
+        blink()
+        time.sleep(0.5)
+        talk(19)
+        blink()
+        time.sleep(0.3)
+        talk(7)
+        time.sleep(1)
+        blink()
+        talk(10)
+        blink()
 
     def nod_yes():
         close_eyes()
@@ -75,7 +118,7 @@ def main():
         time.sleep(0.2)
         close_eyes()
         i = 0
-        while i < 8:
+        while i < 11:
             move(movement_data.laughingPosition1)
             time.sleep(0.2)
             move(movement_data.laughingPosition2)
@@ -99,7 +142,7 @@ def main():
             time.sleep(0.5)
             i += 1
         kit.servo[servo_number].angle = 90
-    
+
     def speak(text):
         # If the robot head were to ever speak, this method would make that happen. 
         # However, as this is outside of the scope of this current assignment,
@@ -110,7 +153,7 @@ def main():
         servoMotors = [config.eyeLeft, config.eyeRight, config.eyeLeftOpen, config.eyeRightOpen, config.eyesUpDown, config.mouth, config.headTilt, config.headSwivel, config.headPivot]
         for servoMotor in servoMotors:
             if servoMotorName == servoMotor.name:
-                return servoMotor.pinNr
+                return servoMotor.pinNr, servoMotor.minRotation, servoMotor.maxRotation
     
     # Here we define what possible commands can be sent to the driver.
     # If future developers add new methods, make sure to add them to this dictionary.
@@ -123,6 +166,7 @@ def main():
         'shake_no': shake_no,
         'blink': blink,
         'laugh': laugh,
+        'demo': demo,
         'sleep': sleep,
         'sus': sus
     }
@@ -135,11 +179,11 @@ def main():
         elif instructions[0] in commands:
             commands[instructions[0]]()
         elif instructions[0] == "manualWithName":
-            manualWithName(instructions[1], instructions[2])
+            manualWithName(instructions[1], int(instructions[2]))
         elif instructions[0] == "manualWithNumber":
-            manualWithNumber(instructions[1], instructions[2])
-        elif instructions[0] == "configure":
-            config(instructions[1])
+            manualWithNumber(int(instructions[1]), int(instructions[2]))
+        elif instructions[0] == "config":
+            configure(int(instructions[1]))
         else:
             print("Unknown command: %s" % (instructions[0]))
         ch.basic_ack(delivery_tag=method.delivery_tag)

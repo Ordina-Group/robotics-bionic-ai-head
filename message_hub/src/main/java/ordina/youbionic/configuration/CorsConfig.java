@@ -10,8 +10,6 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsConfig {
 
-    // @Value("${cors.allowedOrigins}")
-    // private String allowedOrigins;
 
 
     @Bean
@@ -20,10 +18,8 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Allow requests from any origin (you can specify specific origins if needed)
-        // config.addAllowedOrigin(allowedOrigins);
         config.addAllowedOrigin("*");
 
-        // config.setAllowCredentials(true);
         config.setAllowCredentials(false);
 
         // Allow specific HTTP methods (e.g., GET, POST, PUT, DELETE)
