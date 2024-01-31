@@ -4,7 +4,7 @@ As it is currently still in development, there's not one application to straight
 > [!TIP]
 > A tutorial to get you started does exist! Try following it to get you up to speed ASAP :)
 
-Instead, try <br> 
+Or, try <br> 
 * Run /message_hub/src/main/java/ordina/youbionic/YouBionicApplication.java
 * Then, once that it up and running, run /servo_driver/servo_driver.py
 * Then, run /sound_driver/sound_driver.py
