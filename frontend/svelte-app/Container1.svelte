@@ -51,6 +51,14 @@
 	function doPlaySound () {
 		fetch('http://localhost:8080/sound')
 	}
+	
+	function doSleep () {
+		fetch('http://localhost:8080/sleep')
+	}
+	
+	function doThink () {
+		fetch('http://localhost:8080/sus')
+	}
 </script>
 
 <main>
@@ -62,6 +70,9 @@
 	<Button class="primary medium" on:click={doRest}> Rest </Button>
 	<Button class="primary medium" on:click={doBlink}> Blink </Button>
 	<Button class="primary medium" on:click={doLaugh}> Laugh </Button>
+	<br>
+	<Button class="primary large" on:click={doSleep}> Sleep </Button>
+	<Button class="primary large" on:click={doThink}> Think </Button>
 	<br>
 	<Button class="primary large" on:click={doPlaySound}> Play Sound </Button>
 	<Button class="primary large" on:click={() => (advancedControlsVisible = !advancedControlsVisible)}>Toggle controls</Button>
