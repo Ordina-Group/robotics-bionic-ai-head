@@ -1,5 +1,5 @@
 sudo apt update
-sudo apt install wget maven python3.11 rabbitmq-server audacity portaudio19-dev
+sudo apt install wget maven python3.11 rabbitmq-server audacity portaudio19-dev flac
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install nodejs -y
 sudo systemctl enable rabbitmq-server
@@ -30,6 +30,17 @@ pip3 install sounddevice
 pip3 install numpy
 pip3 install scipy
 pip3 install soundfile
+pip3 install setuptools
+pip3 install SpeechRecognition
+pip3 install pyaudio
+pip3 install SpeechRecognition[whisper-local]
+pip3 install piper-tts
+cd ~/Desktop/
+mkdir piper_tts_model
+cd piper_tts_model
+wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx?download=true
+wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx.json?download=true.json
+cd ..
 
 --------------------------------------------------------------------------------------------------------------
 
