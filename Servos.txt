@@ -1,0 +1,12 @@
+Servo's
+
+0 -> Oog rechts open/dicht - 120 = dicht, 70 = open, 90 = ruststand
+1 -> Oog links open/dicht - 60 = dicht, 110 = open, 100 = ruststand
+2 -> Oog links links/rechts - 120 = links, 90 = rechts, 105 = ruststand
+3 -> Oog rechts links/rechts - 100 = rechts, 70 = links, 80 = ruststand
+4 -> Ogen omhoog/omlaag - 80 = omhoog, 140 = omlaag, 100 = ruststand
+5 -> Mond dicht/open - 80 = open, 30 = volledig dicht, 40 = ruststand
+
+13 -> Hoofd omlaag/omhoog -> TILT - 115 = omhoog, 70 = omlaag, 95 = ruststand
+14 -> Hoofd rechts/links -> SWIVEL - 90 = links, 130 = rechts, 110 = ruststand
+15 -> Hoofd links/rechts -> PIVOT - 130 = links, 70 = rechts, 100 = ruststand. Hij kan verder dan 70/130, maar dan gooit hij zichzelf misschien om.
