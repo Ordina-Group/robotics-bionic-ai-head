@@ -41,10 +41,12 @@ with sr.Microphone() as source:
     awake = False
     while True:
         audio = r.listen(source)
-        print("Nu wordt het verwerkt.")
+        print("Audio opgenomen.")
         
         keywords = ["licht", "test", "knipper", "spraak", "vraag"]
         spokenText = r.recognize_whisper(audio, model="small", language="dutch", initial_prompt=prompt).lower()
+        print("Audio herkend: " + spokenText)
+        print("Aan het verwerken...")
         mistakeList = ["ordinna", "ordeena", "gopelt", "robelt", "oortina", "hopelt", "globalte", "vanopot", "ortina", "reelbot", "oordinnen"]
         correctedList = ["ordina", "ordina", "robot", "robot", "ordina", "robot", "robot", "robot", "ordina", "robot", "ordina"]
         # With the introduction of 'initial_prompt' in the r.recognize_whisper, mistake correction becomes almost unnecessary. 
