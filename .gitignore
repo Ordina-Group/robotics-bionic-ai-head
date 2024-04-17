@@ -1,5 +1,6 @@
 /message_hub/target/
 !.mvn/wrapper/maven-wrapper.jar
+/speech_driver/proofs-of-concept/witkey.txt
 
 ### STS ###
 .apt_generated
