@@ -36,8 +36,9 @@ with sr.Microphone() as source:
         start = time.time()
         print("Nu wordt het verwerkt.")
         keywords = ["licht", "test", "knipper", "spraak", "vraag"]
-        spokenText = r.recognize_wit(audio, key=witKey).lower()
-        end = time.time()
+        try:
+            spokenText = r.recognize_wit(audio, key=witKey).lower()
+            end = time.time()
         print(f"Spraak herkend in {end - start} seconden")
         mistakeList = ["ordinna", "ordeena", "gopelt", "robelt", "oortina", "hopelt", "globalte", "vanopot", "ortina", "reelbot", "oordinnen"]
         correctedList = ["ordina", "ordina", "robot", "robot", "ordina", "robot", "robot", "robot", "ordina", "robot", "ordina"]
@@ -64,4 +65,6 @@ with sr.Microphone() as source:
                         method = getattr(activationFunction, keyword)
                         method()
         print(fixedText)
+        except sr.UnknownValueError:
+            print("Something went wrong")
         
