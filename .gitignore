@@ -1,6 +1,7 @@
 /message_hub/target/
 !.mvn/wrapper/maven-wrapper.jar
 /speech_driver/proofs-of-concept/witkey.txt
+/speech_driver/proofs-of-concept/microphone-results.wav
 
 ### STS ###
 .apt_generated
