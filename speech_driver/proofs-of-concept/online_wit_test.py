@@ -40,8 +40,8 @@ with sr.Microphone() as source:
             spokenText = r.recognize_wit(audio, key=witKey).lower()
             end = time.time()
             print(f"Spraak herkend in {end - start} seconden")
-            mistakeList = ["ordinna", "ordeena", "gopelt", "robelt", "oortina", "hopelt", "globalte", "vanopot", "ortina", "reelbot", "oordinnen"]
-            correctedList = ["ordina", "ordina", "robot", "robot", "ordina", "robot", "robot", "robot", "ordina", "robot", "ordina"]
+            mistakeList = ["ordinna", "ordeena", "gopelt", "robelt", "oortina", "hopelt", "globalte", "vanopot", "ortina", "reelbot", "oordinnen", "mordina", "fordina", "jordina", "ordine", "marina", "olina"]
+            correctedList = ["ordina", "ordina", "robot", "robot", "ordina", "robot", "robot", "robot", "ordina", "robot", "ordina", "ordina", "ordina", "ordina", "ordina", "ordina", "ordina"]
             # With the introduction of 'initial_prompt' in the r.recognize_whisper, mistake correction becomes almost unnecessary. 
             # However, it is still applied here to improve performance.
             for i in range(len(mistakeList)):

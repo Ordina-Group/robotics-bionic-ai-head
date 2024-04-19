@@ -1,6 +1,9 @@
-from wit import Wit
+from faster_whisper import WhisperModel
 import speech_recognition as sr
 import time
+
+model_size = "small"
+model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
 def first_value(obj, key):
     if key not in obj:
@@ -20,31 +23,18 @@ def fix_query(query):
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
 
-keyFile = open("witkey.txt", "r")
-witKey = keyFile.readline().rstrip()
-keyFile.close()
-client = Wit(witKey)
 r = sr.Recognizer()
 with sr.Microphone() as source:
     print("Spraakherkenning actief")
     while True:
         audio = r.listen(source)
-        start = time.time()
         with open("microphone-results.wav", "wb") as f:
             f.write(audio.get_wav_data())
-        print("Bestand opgeslagen. Wit raadplegen.")
-        response = None
-        with open("microphone-results.wav", "rb") as f:
-            response = client.speech(f, {'Content-Type': 'audio/wav'})
+        print("Bestand opgeslagen. Whisper raadplegen.")
+        start = time.time()
+        segments, info = model.transcribe("microphone-results.wav", beam_size=5, language="nl")
+        for segment in segments:
+            print(segment.text)
         end = time.time()
         print(f"Spraak herkend in {end - start} seconden")
-        entities = response["entities"]
-        toBeFixedEntity = first_value(entities, "informationEntity:informationEntity")
-        informationEntity = None
-        if toBeFixedEntity:
-            informationEntity = fix_query(toBeFixedEntity)
-        intents = response["intents"]
-        intent = intents[0]
-        if intent["name"] == "inform" and informationEntity:
-            print("Je wil geïnformeerd worden over " + informationEntity)
-        # elif intent["name"] == "joke" and 
+

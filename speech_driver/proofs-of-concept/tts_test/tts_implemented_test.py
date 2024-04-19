@@ -33,9 +33,8 @@ class KeywordActivationClass:
 r = sr.Recognizer()
 activationFunction = KeywordActivationClass()
 commonWords = ["ordina", "robot"]
-explanation = "Het volgende is een Nederlandse spraakinput richting een robot bij Ordina, een bedrijf actief binnen de IT. De volgende woorden komen waarschijnlijk voor: "
-commonWordsString = ", ".join(str(word) for word in commonWords)
-prompt = explanation + commonWordsString
+prompt = ", ".join(str(word) for word in commonWords)
+# According to the Whisper documentation, the model only considers the first 244 tokens of the prompt. Therefore, the common words should remain a short list.
 with sr.Microphone() as source:
     print("Spraakherkenning actief")
     awake = False
