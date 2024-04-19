@@ -3,7 +3,11 @@ import speech_recognition as sr
 import time
 
 model_size = "small"
-model = WhisperModel(model_size, device="cpu", compute_type="int8")
+model = WhisperModel(model_size, device="cuda", compute_type="float16")
+# or run on GPU with INT8
+# model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
+# or run on CPU with INT8
+# model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
 def first_value(obj, key):
     if key not in obj:
