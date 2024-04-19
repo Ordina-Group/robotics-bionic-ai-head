@@ -48,3 +48,4 @@ cd ..
 
 sudo raspi-config
 Interface options -> i2c -> Enable -> Yes -> Finish
+Interface options -> ssh -> Enable -> Yes -> Finish
