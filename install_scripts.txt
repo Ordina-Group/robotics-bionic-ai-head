@@ -35,6 +35,8 @@ pip3 install SpeechRecognition
 pip3 install pyaudio
 pip3 install SpeechRecognition[whisper-local]
 pip3 install piper-tts
+pip3 install invoke
+pip3 install fabric
 cd ~/Desktop/
 mkdir piper_tts_model
 cd piper_tts_model
