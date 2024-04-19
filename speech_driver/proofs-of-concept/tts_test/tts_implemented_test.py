@@ -3,6 +3,8 @@ from invoke import run
 from pydub import AudioSegment
 from pydub.playback import play
 
+connected = input("Are you currently connected to the internet? y/n:")
+
 
 class KeywordActivationClass:
     def test(self):
@@ -15,8 +17,9 @@ class KeywordActivationClass:
         print("Knipper method called")
         
     def spraak(self, arg):
-        spraak = arg.split("robot")
-        piper_speaker =  0 #[0,7,8,17,20,40,41,42,44,45,49,50,51]  
+        # spraak = arg.split("robot")
+        # print(spraak[1])
+        piper_speaker =  0 # I found that the following voices work well: [0,7,8,17,20,40,41,42,44,45,49,50,51]  
         command = "echo " + arg + " | piper -m nl_NL-mls-medium.onnx -s " + str(piper_speaker) + " -f soundbyte.wav"
         result = run(command, hide=True, warn=True)
         if result.ok:

@@ -183,3 +183,4 @@ README.html
 out/
 .micronaut/
 /message_hub/target/
+speech_driver/proofs-of-concept/tts_test/soundbyte.wav
