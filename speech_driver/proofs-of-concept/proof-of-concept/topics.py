@@ -19,17 +19,17 @@ pay = {"triggerWords": ["salaris", "loon", "uurtarief"], "topic": "salaris"}
 clients = {"triggerWords": ["klanten", "werkgever", "werkgevers", "opdrachtgever", "opdrachtgevers"], "topic": "klanten"}
 internships = {"triggerWords": ["stageopdracht", "stageopdrachten", "stage opdracht", "stage opdrachten", "stagemogelijkheden", "stage mogelijkheden", "stagemogelijkheid", "stage mogelijkheid"], "topic": "stage"}
 assignments = {"triggerWords": ["opdracht", "opdrachten"], "topic": "opdrachten"}
-company = {"triggerWords": ["bedrijf Ordina", "jullie bedrijf", "je bedrijf", "organisatie", "sopra steria", "wie zijn jullie", "wie jullie zijn"], "topic": "bedrijf"}
+company = {"triggerWords": ["bedrijf ordina", "jullie bedrijf", "je bedrijf", "organisatie", "sopra steria", "wie zijn jullie", "wie jullie zijn"], "topic": "bedrijf"}
 workEnvironment = {"triggerWords": ["werksfeer", "sfeer op kantoor"], "topic": "werksfeer"}
 whatWeDo = {"triggerWords": ["wat jullie doen", "wat jullie zo al doen"], "topic": "watDoen"}
-robot = {"triggerWords": ["robot", "robothoofd", "robot hoofd", "melvin", "dit hoofd"], "topic": "robot"}
+robot = {"triggerWords": ["robot", "robothoofd", "robot hoofd", "melvin", "dit hoofd", "jezelf"], "topic": "robot"}
 strategy = {"triggerWords": ["strategie"], "topic": "strategie"}
 whyWereHereToday = {"triggerWords": ["waarom jullie hier vandaag zijn", "wat jullie hier vandaag doen", "wat jullie hier doen", "waarom jullie hier zijn"], "topic": "hierVandaag"}
 
 topics = [office, staff, pay, clients, assignments, company, internships, workEnvironment, whatWeDo, robot, strategy, whyWereHereToday]
 
 information = {"kantoor": "Ordina heeft negen kantoren in Nederland, België en Luxemburg, het hoofdkantoor bevindt zich in Nieuwegein.",\
- "personeel": "Ordina heeft ongeveer drie duizend medewerkers, waarvan zeker tachtig procent in Nederland. De gemiddelde leeftijd ligt rond de dertig, en ongeveer twintig procent van de medewerkers is vrouwelijk of non-binair, we zoeken altijd nieuwe collegas",\
+ "personeel": "Ordina heeft ongeveer drie duizend medewerkers, waarvan zeker tachtig procent in Nederland. De gemiddelde leeftijd ligt rond de dertig, en ongeveer twintig procent van de medewerkers is vrouwelijk of non-binair, we zoeken altijd nieuwe collegaas",\
  "salaris": "Ordina is heel transparant in hun salarisverdeling, mijn salaris als robot hoofd is nul ha ha ha ha",\
  "klanten": "We hebben klanten door heel de Beeneluux heen, bijvoorbeeld Defensie of de Rabobank.",\
  "stage": "Sowieso dat we een leuke staazje opdracht hebben liggen, ik ben daar één van, ik ben gemaakt door een staazjeer, verdeeld over twee staazje periodes. Vraag vooral om meer informatie bij een van mijn begeleiders.",\

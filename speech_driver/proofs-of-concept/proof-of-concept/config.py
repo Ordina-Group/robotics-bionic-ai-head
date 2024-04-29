@@ -18,7 +18,7 @@ wakeWords = ["robot", "melvin"]
 
 # WakeWord detectors
 # As of writing, only "custom" has been implemented.
-wakeWordDetectors = ["custom", "hermes", "snowboy"]
+wakeWordDetectors = ["custom", "hermes", "snowboy", "porcupine", "raven", "precise"]
 wakeWordDetector = wakeWordDetectors[0]
 
 # Speech synthesis
@@ -37,7 +37,7 @@ voskModel = voskModels[0]
 intents = ["inform", "joke", "laugh", "nod", "shake", "sleep"]
 
 # Words that trigger certain intents. Misspellings are included due to the less than 100% accuracy of all speech recognizers
-informTriggerWords = ["vertel me", "me vertellen", "informatie", "meer weten", "meer vertellen", "iets vertellen", "wat vertellen", "iets weten"]
+informTriggerWords = ["vertel me", "me vertellen", "informatie", "meer weten", "meer vertellen", "iets vertellen", "wat vertellen", "iets weten", "vertellen over"]
 jokeTriggerWords = ["grapje", "grap", "mopje", "mop", "iets grappigs"]
 laughTriggerWords = ["lachen", "lach voor me", "lach eens", "lag voor me", "lag eens"]
 nodTriggerWords = ["knik ja", "ja knikken"]
@@ -48,3 +48,9 @@ sleepTriggerWords = ["slaap", "ga slapen"]
 # As of writing, only "custom" has been implemented, due to the hardware restrictions of the Raspberry Pi 4b.
 responseGenerators = ["custom", "llama", "geitje", "gpt", "claude"]
 responseGenerator = responseGenerators[0]
+
+# Prompt for online models, for increased accuracy
+commonWords = ["ordina", "robot"]
+explanation = "Het volgende is een Nederlandse spraakinput richting een robot bij Ordina, een bedrijf actief binnen de IT. De volgende woorden komen waarschijnlijk voor: "
+commonWordsString = ", ".join(str(word) for word in commonWords)
+prompt = explanation + commonWordsString
