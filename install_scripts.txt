@@ -41,9 +41,13 @@ pip3 install librosa
 pip3 install pydub
 
 cd ~/Desktop/
-mkdir piper_tts_model
-cd piper_tts_model
+mkdir piper
+cd piper
+wget https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_arm64.tar.gz
 wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx?download=true
+cd ..
+mkdir vosk
+cd vosk
 wget https://alphacephei.com/vosk/models/vosk-model-small-nl-0.22.zip
 wget https://alphacephei.com/vosk/models/vosk-model-nl-spraakherkenning-0.6-lgraph.zip
 cd ..
