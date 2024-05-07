@@ -46,7 +46,7 @@ def main():
     def speak(duration):
         i = 0
         options = [movement_data.mouthDefault, movement_data.mouthOpen1, movement_data.mouthOpen2, movement_data.mouthOpen3]
-        while i < duration:
+        while i < int(duration):
             move(choice(options))
             i += 1
             time.sleep(0.1)

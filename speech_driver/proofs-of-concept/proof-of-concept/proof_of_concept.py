@@ -51,6 +51,10 @@ def cleanText(query):
             textList[i] = "ordina"
         elif textList[i] in config.misspelledRobot:
             textList[i] = "robot"
+        elif len(textList) > i + 1:
+            if textList[i] + " " + textList[i + 1] in config.misspelledRobot:
+                textList[i] = "robot"
+                textList[i + 1] = ""
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
     
@@ -68,16 +72,21 @@ def recognizeSpeech(audio, client):
     
 def speak(text):
     if config.speechSynthesizer == "piper":
-        command = "echo " + text + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
+        if os.name == 'nt':
+            command = "echo " + text + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
+        else:
+            command = "echo " + text + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
         result = run(command, hide=True, warn=True)
         if result.ok:
             audio = AudioSegment.from_file("soundbyte.wav", format="wav")
             duration = librosa.get_duration(path="soundbyte.wav")
-            durationMs = round(duration)
+            durationMs = round(duration * 10)
             command = "speak:" + str(durationMs)
-            channel.basic_publish(exchange='', routing_key='audio_input', body=command)
+            channel.basic_publish(exchange='', routing_key='servo', body=command)
             # return audio
             play(audio)
+        else:
+            print("Something went wrong")
 
 def respond(intent, topic, text):
     if intent == "inform":
@@ -172,9 +181,9 @@ def main(client):
         relativePath = "../../vosk/vosk-model-small-nl-0.22"
         model = Model(relativePath)
         recognizer = KaldiRecognizer(model, 16000)
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print("Ready to go")
         with sr.Microphone() as source:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("Ready to go")
             awake = False
             while True:
                 wakeUp(recognizer)
@@ -201,6 +210,6 @@ def main(client):
 client = initialise()
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
-channel.queue_declare(queue='audio_input')
+channel.queue_declare(queue='servo')
 while True:
     main(client)

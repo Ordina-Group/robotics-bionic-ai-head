@@ -38,11 +38,14 @@ pip3 install piper-tts
 pip3 install invoke
 pip3 install fabric
 pip3 install librosa
+pip3 install pydub
 
 cd ~/Desktop/
 mkdir piper_tts_model
 cd piper_tts_model
 wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx?download=true
+wget https://alphacephei.com/vosk/models/vosk-model-small-nl-0.22.zip
+wget https://alphacephei.com/vosk/models/vosk-model-nl-spraakherkenning-0.6-lgraph.zip
 cd ..
 
 --------------------------------------------------------------------------------------------------------------
