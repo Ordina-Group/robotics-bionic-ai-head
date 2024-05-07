@@ -11,7 +11,7 @@
 misspelledOrdina = ["ordinna", "ordeena", "oortina", "ortina", "oordinnen", "mordina", "fordina", "jordina", "ordine", "marina", "olina", "ordinnen", "oordingen"]
 
 # Misspellings of robot
-misspelledRobot = ["gopelt", "robelt", "hopelt", "globalte", "vanopot", "reelbot"]
+misspelledRobot = ["gopelt", "robelt", "hopelt", "globalte", "vanopot", "reelbot", "koppelt", "robert"]
 
 # Words that wake up the robot. Only relevant for "custom" wakeWordDetector
 wakeWords = ["robot", "melvin"]

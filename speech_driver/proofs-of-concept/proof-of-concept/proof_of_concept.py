@@ -9,6 +9,7 @@ from pydub.playback import play
 import librosa
 from vosk import Model, KaldiRecognizer
 import os
+import pika
 
 def findIntent(text):
     # Check if inform:
@@ -72,7 +73,9 @@ def speak(text):
         if result.ok:
             audio = AudioSegment.from_file("soundbyte.wav", format="wav")
             duration = librosa.get_duration(path="soundbyte.wav")
-            print(duration)
+            durationMs = round(duration)
+            command = "speak:" + str(durationMs)
+            channel.basic_publish(exchange='', routing_key='audio_input', body=command)
             # return audio
             play(audio)
 
@@ -196,5 +199,8 @@ def main(client):
             # act
 
 client = initialise()
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+channel = connection.channel()
+channel.queue_declare(queue='audio_input')
 while True:
     main(client)

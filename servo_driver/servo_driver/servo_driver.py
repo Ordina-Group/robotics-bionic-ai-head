@@ -43,7 +43,7 @@ def main():
     def sus():
         move(movement_data.sus)
 
-    def talk(duration):
+    def speak(duration):
         i = 0
         options = [movement_data.mouthDefault, movement_data.mouthOpen1, movement_data.mouthOpen2, movement_data.mouthOpen3]
         while i < duration:
@@ -63,25 +63,25 @@ def main():
         move(movement_data.mouthShut)
         time.sleep(0.3)
         blink()
-        talk(7)
+        speak(7)
         time.sleep(0.3)
-        talk(8)
+        speak(8)
         time.sleep(0.2)
-        talk(7)
+        speak(7)
         blink()
         time.sleep(0.1)
-        talk(6)
+        speak(6)
         time.sleep(0.2)
-        talk(6)
+        speak(6)
         blink()
         time.sleep(0.5)
-        talk(19)
+        speak(19)
         blink()
         time.sleep(0.3)
-        talk(7)
+        speak(7)
         time.sleep(1)
         blink()
-        talk(10)
+        speak(10)
         blink()
 
     def nod_yes():
@@ -143,11 +143,6 @@ def main():
             i += 1
         kit.servo[servo_number].angle = 90
 
-    def speak(text):
-        # If the robot head were to ever speak, this method would make that happen. 
-        # However, as this is outside of the scope of this current assignment,
-        # it is just an empty method for now.
-        time.sleep(2)
         
     def findPinNumber(servoMotorName):
         servoMotors = [config.eyeLeft, config.eyeRight, config.eyeLeftOpen, config.eyeRightOpen, config.eyesUpDown, config.mouth, config.headTilt, config.headSwivel, config.headPivot]
