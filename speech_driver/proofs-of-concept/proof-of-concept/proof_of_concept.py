@@ -7,22 +7,8 @@ from invoke import run
 from pydub import AudioSegment
 from pydub.playback import play
 import librosa
-
-# config.wakeWords
-# config.wakeWordDetector
-# config.intents
-
-def wakeUp(query):
-    if config.wakeWordDetector == "custom":
-        for wakeUpWord in config.wakeWords:
-            if wakeUpWord in query:
-                return True
-        return False
-    elif config.wakeWordDetector == "snowboy":
-        print("To be implemented")
-    elif config.wakeWordDetector == "hermes":
-        print("To be implemented")
-
+from vosk import Model, KaldiRecognizer
+import os
 
 def findIntent(text):
     # Check if inform:
@@ -67,11 +53,11 @@ def cleanText(query):
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
     
-def recognizeSpeech(audio):
+def recognizeSpeech(audio, client):
     if config.speechRecognizer == "whisper":
-        return r.recognize_whisper(audio, model="small", language="dutch", initial_prompt=config.prompt).lower()
+        return client.recognize_whisper(audio, model="small", language="dutch", initial_prompt=config.prompt).lower()
     elif config.speechRecognizer == "witSR":
-        return r.recognize_wit(audio, key=witKey).lower()
+        return client.recognize_wit(audio, key=witKey).lower()
     elif config.speechRecognizer == "whisperOnline":
         transcription = client.audio.transcriptions.create(model="whisper-1", file=audio)
         return transcription.text
@@ -102,42 +88,36 @@ def respond(intent, topic, text):
     elif intent == "joke":
         if config.responseGenerator == "custom":
             return "Wat is rood en slecht voor je tanden, een baksteen"
-    
-if config.speechRecognizer == "witSR" or config.speechRecognizer == "witAI":
-    witKeyFile = open("witkey.txt", "r")
-    witKey = witKeyFile.readline().rstrip()
-    witKeyFile.close() 
+            
+def initialise():
+    if config.speechRecognizer == "witSR" or config.speechRecognizer == "witAI":
+        witKeyFile = open("witkey.txt", "r")
+        witKey = witKeyFile.readline().rstrip()
+        witKeyFile.close() 
 
-if config.speechRecognizer == "witAI":
-    from wit import Wit
-    client = Wit(witKey)
+    if config.speechRecognizer == "witAI":
+        from wit import Wit
+        return Wit(witKey)
 
-if config.speechRecognizer == "whisperOnline":
-    from openai import OpenAI 
-    client = OpenAI()
-else: 
-    r = sr.Recognizer()
+    elif config.speechRecognizer == "whisperOnline":
+        from openai import OpenAI 
+        return OpenAI()
+    else: 
+        return sr.Recognizer()
 
-with sr.Microphone() as source:
-    print("Ready to go")
-    awake = False
-    while True:
-        audio = r.listen(source)
-        start = time.time()
-        # Record speech and save it
-        with open("microphone-results.wav", "wb") as recording:
-            recording.write(audio.get_wav_data())
-        # Process speech
-        print("Done recording")
-        recognition = recognizeSpeech(audio)
-        # Clean text
-        query = cleanText(recognition)
-        print(query)
-        # Decide whether to wake up or not
-        if awake == False:
-            awake = wakeUp(query)
-        # Take action if awake
-        if awake == True:
+def act(client):
+    with sr.Microphone() as source:
+        while True:
+            audio = client.listen(source)
+            # Record speech and save it
+            with open("microphone-results.wav", "wb") as recording:
+                recording.write(audio.get_wav_data())
+            # Process speech
+            print("Done recording")
+            recognition = recognizeSpeech(audio, client)
+            # Clean text
+            query = cleanText(recognition)
+            print(query)
             # Decide intent
             foundIntent = findIntent(query)
             intent = foundIntent["intent"]
@@ -162,12 +142,59 @@ with sr.Microphone() as source:
                     # laugh
                     print("laughing")
                 else:
-                    if "robot" in query:
-                        queryList = query.split(" ")
-                        # This check is to determine if the user wanted to wakeup the robot or had an actual query
-                        if len(queryList) > 3:
-                            speak("Ik weet niet precies wat je van me wil, of ik heb je niet goed verstaan, probeer het nog een keertje.")
-                    else: 
-                        speak("Ik weet niet precies wat je van me wil, of ik heb je niet goed verstaan, probeer het nog een keertje.")
+                    speak("Ik weet niet precies wat je van me wil, of ik heb je niet goed verstaan, probeer het nog een keertje.")
             if topic != "unknown" and topic != None:
-                awake = False
+                return True
+            else:
+                return False
+
+# Implementation for fast speech recognition. Uses VOSK and only used for wake word detection.
+def wakeUp(recognizer):
+    mic = pyaudio.PyAudio()
+    stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
+    stream.start_stream()
+    while True:
+        data = stream.read(4096, exception_on_overflow = False)
+        if recognizer.AcceptWaveform(data):
+            text = recognizer.Result()
+            cleanQuery = cleanText(text[14:-3])
+            print(cleanQuery)
+            for wakeUpWord in config.wakeWords:
+                if wakeUpWord in cleanQuery:
+                    return True
+
+def main(client):
+    if config.wakeWordDetector == "custom":
+        # relativePath = "../../vosk/vosk-model-nl-spraakherkenning-0.6-lgraph"
+        relativePath = "../../vosk/vosk-model-small-nl-0.22"
+        model = Model(relativePath)
+        recognizer = KaldiRecognizer(model, 16000)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Ready to go")
+        with sr.Microphone() as source:
+            awake = False
+            while True:
+                wakeUp(recognizer)
+                print("Awake")
+                acted = False
+                while acted == False:
+                    acted = act(client)
+    elif config.wakeWordDetector == "snowboy":
+        while True:
+            print("")
+            # Run snowboy until wake word is detected, then act()
+    elif config.wakeWordDetector == "porcupine":
+        while True:
+            print("") # act
+    elif config.wakeWordDetector == "raven":
+        while True:
+            print("")
+           # act
+    elif config.wakeWordDetector == "precise":
+        while True:
+            print("")
+            # act
+
+client = initialise()
+while True:
+    main(client)

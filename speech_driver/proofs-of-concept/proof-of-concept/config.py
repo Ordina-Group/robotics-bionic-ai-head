@@ -18,7 +18,7 @@ wakeWords = ["robot", "melvin"]
 
 # WakeWord detectors
 # As of writing, only "custom" has been implemented.
-wakeWordDetectors = ["custom", "hermes", "snowboy", "porcupine", "raven", "precise"]
+wakeWordDetectors = ["custom", "snowboy", "porcupine", "raven", "precise"]
 wakeWordDetector = wakeWordDetectors[0]
 
 # Speech synthesis
