@@ -43,7 +43,19 @@ def findIntent(text):
         if tw in text:
             return {"intent": "sleep", "responseWanted": False, "topic": None}
     return {"intent": "unknown", "responseWanted": False, "topic": None}
-    
+
+def cleanWakeUp(query):
+    textList = query.split()
+    for i in range(len(textList)):
+        if textList[i] in config.misspelledRobot:
+            textList[i] = "robot"
+        elif len(textList) > i + 1:
+            if textList[i] + " " + textList[i + 1] in config.misspelledRobot:
+                textList[i] = "robot"
+                textList[i + 1] = ""
+    fixedText = " ".join(str(word) for word in textList)
+    return fixedText
+
 def cleanText(query):
     textList = query.split()
     for i in range(len(textList)):
@@ -51,10 +63,6 @@ def cleanText(query):
             textList[i] = "ordina"
         elif textList[i] in config.misspelledRobot:
             textList[i] = "robot"
-        elif len(textList) > i + 1:
-            if textList[i] + " " + textList[i + 1] in config.misspelledRobot:
-                textList[i] = "robot"
-                textList[i + 1] = ""
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
     
@@ -169,7 +177,7 @@ def wakeUp(recognizer):
         data = stream.read(4096, exception_on_overflow = False)
         if recognizer.AcceptWaveform(data):
             text = recognizer.Result()
-            cleanQuery = cleanText(text[14:-3])
+            cleanQuery = cleanWakeUp(text[14:-3])
             print(cleanQuery)
             for wakeUpWord in config.wakeWords:
                 if wakeUpWord in cleanQuery:
