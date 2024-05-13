@@ -19,11 +19,12 @@ def findIntent(text):
             for topic in topics.topics:
                 for topicTw in topic["triggerWords"]:
                     # This step is added to remove potentials where words earlier in the sentence get detected as the topic.
-                    if topicTw in afterOver[1]:
-                        return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
+                    if len(afterOver) > 0:
+                        if topicTw in afterOver[1]:
+                            return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
                     # '!= robot' has to be added to avoid errors regarding the wakeup word.
-                    elif topicTw in text and topicTw != "robot":
-                        return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
+                        elif topicTw in text and topicTw != "robot":
+                            return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
             # If no triggerwords were triggered but we still want a response:
             return {"intent": "inform", "responseWanted": True, "topic": "unknown"}
     # Check if joke:  
@@ -84,17 +85,15 @@ def speak(text):
             command = "echo " + text + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
         else:
             command = "echo " + text + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
-        result = run(command, hide=True, warn=True)
-        if result.ok:
-            audio = AudioSegment.from_file("soundbyte.wav", format="wav")
-            duration = librosa.get_duration(path="soundbyte.wav")
-            durationMs = round(duration * 10)
-            command = "speak:" + str(durationMs)
-            channel.basic_publish(exchange='', routing_key='servo', body=command)
-            # return audio
-            play(audio)
-        else:
-            print("Something went wrong")
+        run(command, hide=True, warn=True)
+        audio = AudioSegment.from_file("soundbyte.wav", format="wav")
+        duration = librosa.get_duration(path="soundbyte.wav")
+        durationMs = round(duration * 10)
+        command = "speak:" + str(durationMs)
+        channel.basic_publish(exchange='', routing_key='servo', body=command)
+        # return audio
+        play(audio)
+
 
 def respond(intent, topic, text):
     if intent == "inform":
@@ -134,7 +133,11 @@ def act(client):
                 recording.write(audio.get_wav_data())
             # Process speech
             print("Done recording")
+            start = time.time()
             recognition = recognizeSpeech(audio, client)
+            end = time.time()
+            duration = end-start
+            print(f"{duration} seconden")
             # Clean text
             query = cleanText(recognition)
             print(query)
