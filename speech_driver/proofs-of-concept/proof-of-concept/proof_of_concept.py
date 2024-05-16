@@ -155,15 +155,19 @@ def act(client):
                 if intent == "sleep":
                     # sleep
                     print("Going to sleep")
+                    channel.basic_publish(exchange='', routing_key='servo', body=intent)
                 elif intent == "nod":
                     # nod
                     print("nodding")
+                    channel.basic_publish(exchange='', routing_key='servo', body=intent)
                 elif intent == "shake":
                     # shake
                     print("shaking")
+                    channel.basic_publish(exchange='', routing_key='servo', body=intent)
                 elif intent == "laugh":
                     # laugh
                     print("laughing")
+                    channel.basic_publish(exchange='', routing_key='servo', body=intent)
                 else:
                     speak("Ik weet niet precies wat je van me wil, of ik heb je niet goed verstaan, probeer het nog een keertje.")
             if topic != "unknown" and topic != None:
@@ -199,6 +203,7 @@ def main(client):
             while True:
                 wakeUp(recognizer)
                 print("Awake")
+                channel.basic_publish(exchange='', routing_key='servo', body="rest")
                 acted = False
                 while acted == False:
                     acted = act(client)

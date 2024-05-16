@@ -25,12 +25,14 @@ whatWeDo = {"triggerWords": ["wat jullie doen", "wat jullie zo al doen"], "topic
 robot = {"triggerWords": ["robot", "robothoofd", "robot hoofd", "melvin", "dit hoofd", "jezelf"], "topic": "robot"}
 strategy = {"triggerWords": ["strategie"], "topic": "strategie"}
 whyWereHereToday = {"triggerWords": ["waarom jullie hier vandaag zijn", "wat jullie hier vandaag doen", "wat jullie hier doen", "waarom jullie hier zijn"], "topic": "hierVandaag"}
+sopraSteria = {"triggerWords": ["sopra steria", "soprasteria"], "topic": "sopraSteria"}
+jobForMe = {"triggerWords": ["baan voor me", "ik zoek werk", "werk voor me", "zoek nog een baan"], "topic": "baanVoorMe"}
 
-topics = [office, staff, pay, clients, assignments, company, internships, workEnvironment, whatWeDo, robot, strategy, whyWereHereToday]
+topics = [office, staff, pay, clients, assignments, company, internships, workEnvironment, whatWeDo, robot, strategy, whyWereHereToday, sopraSteria, jobForMe]
 
 information = {"kantoor": "Ordina heeft negen kantoren in Nederland, België en Luxemburg, het hoofdkantoor bevindt zich in Nieuwegein.",\
  "personeel": "Ordina heeft ongeveer drie duizend medewerkers, waarvan zeker tachtig procent in Nederland. De gemiddelde leeftijd ligt rond de dertig, en ongeveer twintig procent van de medewerkers is vrouwelijk of non-binair, we zoeken altijd nieuwe collegaas",\
- "salaris": "Ordina is heel transparant in hun salarisverdeling, mijn salaris als robot hoofd is nul ha ha ha ha",\
+ "salaris": "Ik zal je niet lastig vallen met de details, maar mijn salaris als robot hoofd is nul ha ha ha ha",\
  "klanten": "We hebben klanten door heel de Beeneluux heen, bijvoorbeeld Defensie of de Rabobank.",\
  "stage": "Sowieso dat we een leuke staazje opdracht hebben liggen, ik ben daar één van, ik ben gemaakt door een staazjeer, verdeeld over twee staazje periodes. Vraag vooral om meer informatie bij een van mijn begeleiders.",\
 "opdrachten": "We hebben opdrachten voor een grote hoeveelheid verschillende klanten. De ene is spannender dan de andere, ik heb zelf geen werkervaring, maar de mensen om me heen wel!",\
@@ -39,4 +41,6 @@ information = {"kantoor": "Ordina heeft negen kantoren in Nederland, België en 
 "watDoen": "tekst!",\
 "robot": "Ik ben een robot, in elkaar gezet en herontworpen door Marten Elsinga, een staazjeer bij Ordina. Ik draai op een raspberry paai vier b, mijn naam is Melvin, aangenaam kennis te maken",\
 "strategie": "tekst!",\
-"hierVandaag": "We zijn hier vandaag op tek nee sjon om onszelf te preesenteeren aan jou, misschien een toekomstige collega of zakenpartner"}
+"hierVandaag": "We zijn hier vandaag op tek nee sjon om onszelf te preesenteeren aan jou, misschien een toekomstige collega of zakenpartner",\
+"sopraSteria": "Stukje tekst",\
+"baanVoorMe": "We zijn altijd op zoek naar collega's, en hoewel ik je zelf niet iets aan kan bieden verwijs ik je graag door naar de mensen die me vandaag hebben meegenomen"}

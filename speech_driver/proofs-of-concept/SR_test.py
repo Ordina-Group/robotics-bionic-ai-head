@@ -8,7 +8,7 @@ with sr.Microphone() as source:
         audio = r.listen(source)
         before = time.perf_counter()
         print("Nu wordt het verwerkt.")
-        spokenText = r.recognize_whisper(audio, language="dutch")
+        spokenText = r.recognize_whisper(audio, language="dutch", model="medium")
         after = time.perf_counter()
         print(spokenText)
         print(f"Daar deed ik {after - before:0.4f} seconden over")

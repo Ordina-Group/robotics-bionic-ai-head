@@ -94,7 +94,7 @@ def main():
         speak(10)
         blink()
 
-    def nod_yes():
+    def nod():
         close_eyes()
         i = 0
         while i < 5:
@@ -105,7 +105,7 @@ def main():
             i += 1
         open_eyes()
 
-    def shake_no():
+    def shake():
         close_eyes()
         i = 0
         while i < 5:
@@ -167,8 +167,8 @@ def main():
         'close_eyes': close_eyes,
         'open_eyes': open_eyes,
         'all90': all90,
-        'nod_yes': nod_yes,
-        'shake_no': shake_no,
+        'nod': nod,
+        'shake': shake,
         'blink': blink,
         'laugh': laugh,
         'demo': demo,
