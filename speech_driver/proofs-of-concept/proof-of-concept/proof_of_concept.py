@@ -3,6 +3,7 @@ import time
 import pyaudio
 import config
 import topics
+from funfacts import funFacts
 from invoke import run
 from pydub import AudioSegment
 from pydub.playback import play
@@ -10,8 +11,13 @@ import librosa
 from vosk import Model, KaldiRecognizer
 import os
 import pika
+import random
 
 def findIntent(text):
+    # Check if fun fact:
+    for tw in config.funFactTriggerWords:
+        if tw in text:
+            return {"intent": "funfact", "responseWanted": True, "topic": None}
     # Check if inform:
     afterOver = text.split("over")
     for tw in config.informTriggerWords:
@@ -96,28 +102,24 @@ def speak(text):
 
 
 def respond(intent, topic, text):
-    if intent == "inform":
-        if config.responseGenerator == "custom":
+    if config.responseGenerator == "custom":
+        if intent == "inform":
             if topic == "unknown":
                 subject = list(text.split(" "))
                 print(subject[-1])
                 return "Ik hoor dat je over " + subject[-1] + " geïnformeerd wil worden, maar ik heb daar geen kennis over."
             else:
                 return topics.information[topic]
-    elif intent == "joke":
-        if config.responseGenerator == "custom":
+        elif intent == "joke":
             return "Wat is rood en slecht voor je tanden, een baksteen"
+        elif intent == "funfact":
+            random.seed(time.time())
+            return random.choice(funFacts)
             
 def initialise():
-    if config.speechRecognizer == "witSR" or config.speechRecognizer == "witAI":
-        witKeyFile = open("witkey.txt", "r")
-        witKey = witKeyFile.readline().rstrip()
-        witKeyFile.close() 
-
     if config.speechRecognizer == "witAI":
         from wit import Wit
         return Wit(witKey)
-
     elif config.speechRecognizer == "whisperOnline":
         from openai import OpenAI 
         return OpenAI()
@@ -133,11 +135,8 @@ def act(client):
                 recording.write(audio.get_wav_data())
             # Process speech
             print("Done recording")
-            start = time.time()
+            channel.basic_publish(exchange='', routing_key='servo', body="sus")
             recognition = recognizeSpeech(audio, client)
-            end = time.time()
-            duration = end-start
-            print(f"{duration} seconden")
             # Clean text
             query = cleanText(recognition)
             print(query)
@@ -156,20 +155,24 @@ def act(client):
                     # sleep
                     print("Going to sleep")
                     channel.basic_publish(exchange='', routing_key='servo', body=intent)
+                    return True
                 elif intent == "nod":
                     # nod
                     print("nodding")
                     channel.basic_publish(exchange='', routing_key='servo', body=intent)
+                    return True
                 elif intent == "shake":
                     # shake
                     print("shaking")
                     channel.basic_publish(exchange='', routing_key='servo', body=intent)
+                    return True
                 elif intent == "laugh":
                     # laugh
                     print("laughing")
                     channel.basic_publish(exchange='', routing_key='servo', body=intent)
+                    return True
                 else:
-                    speak("Ik weet niet precies wat je van me wil, of ik heb je niet goed verstaan, probeer het nog een keertje.")
+                    print("Ik heb je niet goed verstaan. Probeer het nog eens.")
             if topic != "unknown" and topic != None:
                 return True
             else:
@@ -190,6 +193,24 @@ def wakeUp(recognizer):
                 if wakeUpWord in cleanQuery:
                     return True
 
+def actLoop():
+    while True:
+        print("Awake")
+        acted = False
+        timeOut = 0
+        timeOutLimit = 4
+        while acted == False and timeOut < timeOutLimit:
+            channel.basic_publish(exchange='', routing_key='servo', body="rest")
+            acted = act(client)
+            if acted == False:
+                timeOut += 1
+                if timeOut == timeOutLimit:
+                    print("Ik ben per ongeluk wakker geworden geloof ik. Ik ga weer slapen.")
+            else:
+                print("Oké, ik ga weer slapen.")
+        return
+
+
 def main(client):
     if config.wakeWordDetector == "custom":
         # relativePath = "../../vosk/vosk-model-nl-spraakherkenning-0.6-lgraph"
@@ -202,11 +223,8 @@ def main(client):
             awake = False
             while True:
                 wakeUp(recognizer)
-                print("Awake")
-                channel.basic_publish(exchange='', routing_key='servo', body="rest")
-                acted = False
-                while acted == False:
-                    acted = act(client)
+                actLoop()
+                channel.basic_publish(exchange='', routing_key='servo', body="sleep")
     elif config.wakeWordDetector == "snowboy":
         while True:
             print("")
@@ -223,6 +241,10 @@ def main(client):
             print("")
             # act
 
+if config.speechRecognizer == "witSR" or config.speechRecognizer == "witAI":
+    witKeyFile = open("witkey.txt", "r")
+    witKey = witKeyFile.readline().rstrip()
+    witKeyFile.close() 
 client = initialise()
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()

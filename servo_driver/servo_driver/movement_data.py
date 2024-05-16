@@ -124,8 +124,8 @@ shakingNo1 = Position(
     eyesUpDown=None,
     mouth=None,
     headTilt=None,
-    headSwivel=conf.headSwivel.minRotation,
-    headPivot=None
+    headSwivel=None,
+    headPivot=conf.headPivot.minRotation
 )
 shakingNo2 = Position(
     eyeLeft=None,
@@ -135,8 +135,8 @@ shakingNo2 = Position(
     eyesUpDown=None,
     mouth=None,
     headTilt=None,
-    headSwivel=conf.headSwivel.maxRotation,
-    headPivot=None
+    headSwivel=None,
+    headPivot=conf.headPivot.maxRotation
 )
 sleep = Position(
     eyeLeft=conf.eyeLeft.defaultRotation,
@@ -146,8 +146,8 @@ sleep = Position(
     eyesUpDown=conf.eyesUpDown.maxRotation,
     mouth=conf.mouth.minRotation,
     headTilt=conf.headTilt.minRotation,
-    headSwivel=None,
-    headPivot=None
+    headSwivel=conf.headSwivel.defaultRotation,
+    headPivot=conf.headPivot.defaultRotation
 )
 sus = Position(
     eyeLeft=conf.eyeLeft.defaultRotation,
@@ -156,7 +156,7 @@ sus = Position(
     eyeRightOpen=(conf.eyeRightOpen.maxRotation - 20),
     eyesUpDown=(conf.eyesUpDown.defaultRotation + 10),
     mouth=conf.mouth.minRotation,
-    headTilt=None,
+    headTilt=conf.headTilt.defaultRotation,
     headSwivel=(conf.headSwivel.minRotation + 10),
     headPivot=(conf.headPivot.minRotation + 10)
 )

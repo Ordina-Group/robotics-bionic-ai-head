@@ -11,8 +11,8 @@
 misspelledOrdina = ["ordinna", "ordeena", "oortina", "ortina", "oordinnen", "mordina", "fordina", "jordina", "ordine", "marina", "olina", "ordinnen", "oordingen"]
 
 # Misspellings of robot
-misspelledRobot = ["gopelt", "robelt", "hopelt", "globalte", "vanopot", "reelbot", "koppelt", "robert", "ook op", "geopend"]
-misspelledMelvin = ["melvin"]
+misspelledRobot = ["gopelt", "robelt", "hopelt", "globalte", "vanopot", "reelbot", "koppelt", "robert", "ook op", "geopend", "kookpot", "geboekt", "kook pot", "gekoppeld", "ogen", "opgenomen"]
+misspelledMelvin = ["melvin", "elf in"]
 
 # Words that wake up the robot. Only relevant for "custom" wakeWordDetector
 wakeWords = ["robot", "melvin"]
@@ -35,15 +35,16 @@ voskModels = ["option1", "option2"]
 voskModel = voskModels[0]
 
 # Intents
-intents = ["inform", "joke", "laugh", "nod", "shake", "sleep"]
+intents = ["inform", "joke", "laugh", "nod", "shake", "sleep", "funfact"]
 
 # Words that trigger certain intents. Misspellings are included due to the less than 100% accuracy of all speech recognizers
+funFactTriggerWords = ["grappig feitje", "leuk feitje", "fun fact", "leuk feit", "grappig feit"]
 informTriggerWords = ["vertel me", "me vertellen", "informatie", "meer weten", "meer vertellen", "iets vertellen", "wat vertellen", "iets weten", "vertellen over", "hoe zit het met", "wat weet je"]
 jokeTriggerWords = ["grapje", "grap", "mopje", "mop", "iets grappigs"]
 laughTriggerWords = ["lachen", "lach voor me", "lach eens", "lag voor me", "lag eens"]
 nodTriggerWords = ["knik ja", "ja knikken"]
 shakeTriggerWords = ["nee schudden", "schud nee", "schudt nee", "schut nee"]
-sleepTriggerWords = ["slaap", "ga slapen"]
+sleepTriggerWords = ["slaap", "slapen"]
 
 # Response GeneratorExit
 # As of writing, only "custom" has been implemented, due to the hardware restrictions of the Raspberry Pi 4b.
