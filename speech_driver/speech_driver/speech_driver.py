@@ -97,11 +97,13 @@ def speak(text):
         else:
             command = "echo " + text + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
         run(command, hide=True, warn=True)
-        audio = AudioSegment.from_file("soundbyte.wav", format="wav")
-        duration = librosa.get_duration(path="soundbyte.wav")
+        filePath = "soundbyte.wav"
+        audio = AudioSegment.from_file(filePath, format="wav")
+        duration = librosa.get_duration(path=filePath)
         durationMs = round(duration * 10)
         command = "speak:" + str(durationMs)
         channel.basic_publish(exchange='', routing_key='servo', body=command)
+        channel.basic_publish(exchange='', routing_key='audio_output', body=filePath)
         # return audio
         play(audio)
 
@@ -225,8 +227,8 @@ def actLoop():
 
 def main(client):
     if config.wakeWordDetector == "custom":
-        # relativePath = "../../vosk/vosk-model-nl-spraakherkenning-0.6-lgraph"
-        relativePath = "../../vosk/vosk-model-small-nl-0.22"
+        # relativePath = "speech_driver/vosk/vosk-model-nl-spraakherkenning-0.6-lgraph"
+        relativePath = "speech_driver/vosk/vosk-model-small-nl-0.22"
         model = Model(relativePath)
         recognizer = KaldiRecognizer(model, 16000)
         with sr.Microphone() as source:
@@ -261,5 +263,6 @@ client = initialise()
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
 channel.queue_declare(queue='servo')
+channel.queue_declare(queue='audio_output')
 while True:
     main(client)

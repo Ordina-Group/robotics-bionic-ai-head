@@ -13,7 +13,7 @@
 # If you decide to use Piper tts, some of the voices act weird if a sentence has too little words.
 # Therefore, instead of ending the sentence (.), use a comma (,) to prolong it.
 
-office = {"triggerWords": ["kantoor", "kantoren", "locaties"], "topic": "kantoor"}
+office = {"triggerWords": ["kantoor", "kantoren", "locaties", "kantor"], "topic": "kantoor"}
 staff = {"triggerWords": ["personeel", "collega's", "collega", "medewerker", "medewerkers"], "topic": "personeel"}
 pay = {"triggerWords": ["salaris", "loon", "uurtarief"], "topic": "salaris"}
 clients = {"triggerWords": ["klanten", "werkgever", "werkgevers", "opdrachtgever", "opdrachtgevers"], "topic": "klanten"}
