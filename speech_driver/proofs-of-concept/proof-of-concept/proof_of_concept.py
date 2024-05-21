@@ -109,7 +109,7 @@ def speak(text):
 def respond(intent, topic, text):
     if config.responseGenerator == "custom":
         if intent == "job":
-            return "We zijn altijd op zoek naar collega's, en hoewel ik je zelf niet iets aan kan bieden verwijs ik je graag door naar de mensen die me vandaag hebben meegenomen"
+            return "We zijn altijd op zoek naar collegaas, en hoewel ik je zelf niet iets aan kan bieden verwijs ik je graag door naar de mensen die me vandaag hebben meegenomen"
         if intent == "inform":
             if topic == "unknown":
                 subject = list(text.split(" "))
@@ -122,7 +122,8 @@ def respond(intent, topic, text):
             return random.choice(jokes)
         elif intent == "funfact":
             random.seed(time.time())
-            return random.choice(funFacts)
+            fact = random.choice(funFacts)
+            return "Wist je dat " + fact
             
 def initialise():
     if config.speechRecognizer == "witAI":
