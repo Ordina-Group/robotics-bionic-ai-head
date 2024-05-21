@@ -216,8 +216,10 @@ def actLoop():
                 timeOut += 1
                 if timeOut == timeOutLimit:
                     print("Ik ben per ongeluk wakker geworden geloof ik. Ik ga weer slapen.")
+                    return
             else:
                 print("Oké, ik ga weer slapen.")
+                return
         return
 
 
