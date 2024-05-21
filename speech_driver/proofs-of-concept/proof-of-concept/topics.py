@@ -26,9 +26,8 @@ robot = {"triggerWords": ["robot", "robothoofd", "robot hoofd", "melvin", "dit h
 strategy = {"triggerWords": ["strategie"], "topic": "strategie"}
 whyWereHereToday = {"triggerWords": ["waarom jullie hier vandaag zijn", "wat jullie hier vandaag doen", "wat jullie hier doen", "waarom jullie hier zijn"], "topic": "hierVandaag"}
 sopraSteria = {"triggerWords": ["sopra steria", "soprasteria"], "topic": "sopraSteria"}
-jobForMe = {"triggerWords": ["baan voor me", "ik zoek werk", "werk voor me", "zoek nog een baan"], "topic": "baanVoorMe"}
 
-topics = [office, staff, pay, clients, assignments, company, internships, workEnvironment, whatWeDo, robot, strategy, whyWereHereToday, sopraSteria, jobForMe]
+topics = [office, staff, pay, clients, assignments, company, internships, workEnvironment, whatWeDo, robot, strategy, whyWereHereToday, sopraSteria]
 
 information = {"kantoor": "Ordina heeft negen kantoren in Nederland, België en Luxemburg, het hoofdkantoor bevindt zich in Nieuwegein.",\
  "personeel": "Ordina heeft ongeveer drie duizend medewerkers, waarvan zeker tachtig procent in Nederland. De gemiddelde leeftijd ligt rond de dertig, en ongeveer twintig procent van de medewerkers is vrouwelijk of non-binair, we zoeken altijd nieuwe collegaas",\
@@ -38,9 +37,8 @@ information = {"kantoor": "Ordina heeft negen kantoren in Nederland, België en 
 "opdrachten": "We hebben opdrachten voor een grote hoeveelheid verschillende klanten. De ene is spannender dan de andere, ik heb zelf geen werkervaring, maar de mensen om me heen wel!",\
 "bedrijf": "Ordina is in negentien drie en zeventig opgericht, en in twee duizend drie en twintig overgekocht door Soopra Steria, we zijn gespecialiseerd in I T consultancy.",\
 "werksfeer": "Ondanks dat we een relatief groot bedrijf zijn, heerst er een fijne en gezellige werksfeer. We gaan regelmatig op uitjes naar evenementen als deze, of bijvoorbeeld de Efteling",\
-"watDoen": "tekst!",\
+"watDoen": "Wij zijn experts in de ie zee thee, en leveren software en advies aan onze klanten.",\
 "robot": "Ik ben een robot, in elkaar gezet en herontworpen door Marten Elsinga, een staazjeer bij Ordina. Ik draai op een raspberry paai vier b, mijn naam is Melvin, aangenaam kennis te maken",\
-"strategie": "tekst!",\
+"strategie": "Onze strategie is om verandering voor te zijn, daarom werken we constant hard om bij de tijd te blijven.",\
 "hierVandaag": "We zijn hier vandaag op tek nee sjon om onszelf te preesenteeren aan jou, misschien een toekomstige collega of zakenpartner",\
-"sopraSteria": "Stukje tekst",\
-"baanVoorMe": "We zijn altijd op zoek naar collega's, en hoewel ik je zelf niet iets aan kan bieden verwijs ik je graag door naar de mensen die me vandaag hebben meegenomen"}
+"sopraSteria": "In twee duizend drie en twintig zijn we overgekocht door Sopra Steria, een Frans bedrijf, en in September veranderen we onze naam."}

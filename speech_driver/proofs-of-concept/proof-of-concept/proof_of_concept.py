@@ -4,6 +4,7 @@ import pyaudio
 import config
 import topics
 from funfacts import funFacts
+from jokes import jokes
 from invoke import run
 from pydub import AudioSegment
 from pydub.playback import play
@@ -14,6 +15,10 @@ import pika
 import random
 
 def findIntent(text):
+    # Check if user wants job:
+    for tw in config.jobTriggerWords:
+        if tw in text:
+            return {"intent": "job", "responseWanted": True, "topic": None}
     # Check if fun fact:
     for tw in config.funFactTriggerWords:
         if tw in text:
@@ -25,7 +30,7 @@ def findIntent(text):
             for topic in topics.topics:
                 for topicTw in topic["triggerWords"]:
                     # This step is added to remove potentials where words earlier in the sentence get detected as the topic.
-                    if len(afterOver) > 0:
+                    if len(afterOver) > 1:
                         if topicTw in afterOver[1]:
                             return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
                     # '!= robot' has to be added to avoid errors regarding the wakeup word.
@@ -103,6 +108,8 @@ def speak(text):
 
 def respond(intent, topic, text):
     if config.responseGenerator == "custom":
+        if intent == "job":
+            return "We zijn altijd op zoek naar collega's, en hoewel ik je zelf niet iets aan kan bieden verwijs ik je graag door naar de mensen die me vandaag hebben meegenomen"
         if intent == "inform":
             if topic == "unknown":
                 subject = list(text.split(" "))
@@ -111,7 +118,8 @@ def respond(intent, topic, text):
             else:
                 return topics.information[topic]
         elif intent == "joke":
-            return "Wat is rood en slecht voor je tanden, een baksteen"
+            random.seed(time.time())
+            return random.choice(jokes)
         elif intent == "funfact":
             random.seed(time.time())
             return random.choice(funFacts)
@@ -150,6 +158,10 @@ def act(client):
                 response = respond(intent, topic, query)
                 # Speak:
                 speak(response)
+                if topic != "unknown":
+                    return True
+                else:
+                    return False
             else:
                 if intent == "sleep":
                     # sleep
@@ -173,10 +185,7 @@ def act(client):
                     return True
                 else:
                     print("Ik heb je niet goed verstaan. Probeer het nog eens.")
-            if topic != "unknown" and topic != None:
-                return True
-            else:
-                return False
+            
 
 # Implementation for fast speech recognition. Uses VOSK and only used for wake word detection.
 def wakeUp(recognizer):

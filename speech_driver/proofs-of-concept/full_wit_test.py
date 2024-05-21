@@ -34,17 +34,18 @@ with sr.Microphone() as source:
             f.write(audio.get_wav_data())
         print("Bestand opgeslagen. Wit raadplegen.")
         response = None
-        with open("microphone-results.wav", "rb") as f:
+        with open("audio.wav", "rb") as f:
             response = client.speech(f, {'Content-Type': 'audio/wav'})
         end = time.time()
         print(f"Spraak herkend in {end - start} seconden")
-        entities = response["entities"]
-        toBeFixedEntity = first_value(entities, "informationEntity:informationEntity")
-        informationEntity = None
-        if toBeFixedEntity:
-            informationEntity = fix_query(toBeFixedEntity)
-        intents = response["intents"]
-        intent = intents[0]
-        if intent["name"] == "inform" and informationEntity:
-            print("Je wil geïnformeerd worden over " + informationEntity)
+        print(response)
+        #entities = response["entities"]
+        #toBeFixedEntity = first_value(entities, "informationEntity:informationEntity")
+        #informationEntity = None
+        #if toBeFixedEntity:
+            #informationEntity = fix_query(toBeFixedEntity)
+        #intents = response["intents"]
+        #intent = intents[0]
+        #if intent["name"] == "inform" and informationEntity:
+            #print("Je wil geïnformeerd worden over " + informationEntity)
         # elif intent["name"] == "joke" and 

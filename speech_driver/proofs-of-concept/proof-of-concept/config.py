@@ -35,9 +35,11 @@ voskModels = ["option1", "option2"]
 voskModel = voskModels[0]
 
 # Intents
-intents = ["inform", "joke", "laugh", "nod", "shake", "sleep", "funfact"]
+intents = ["job", "inform", "joke", "laugh", "nod", "shake", "sleep", "funfact"]
 
 # Words that trigger certain intents. Misspellings are included due to the less than 100% accuracy of all speech recognizers
+jobTriggerWords = ["baan voor me", "ik zoek werk", "werk voor me", "zoek nog een baan", "zoek een baan", "werk voor mij", "baan voor mij", "zoek nog werk",\
+"zoek naar werk", "zoek naar een baan", "vacature open", "factuur open", "baan aanbod"]
 funFactTriggerWords = ["grappig feitje", "leuk feitje", "fun fact", "leuk feit", "grappig feit"]
 informTriggerWords = ["vertel me", "me vertellen", "informatie", "meer weten", "meer vertellen", "iets vertellen", "wat vertellen", "iets weten", "vertellen over", "hoe zit het met", "wat weet je"]
 jokeTriggerWords = ["grapje", "grap", "mopje", "mop", "iets grappigs"]
