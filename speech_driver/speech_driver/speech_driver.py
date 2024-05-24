@@ -78,13 +78,14 @@ def cleanText(query):
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
     
-def recognizeSpeech(audio, client):
+# def recognizeSpeech(audio, r, client):
+def recognizeSpeech(audio):
     if config.speechRecognizer == "whisper":
-        return client.recognize_whisper(audio, model="small", language="dutch", initial_prompt=config.prompt).lower()
+        return r.recognize_whisper(audio, model="small", language="dutch", initial_prompt=config.prompt).lower()
     elif config.speechRecognizer == "witSR":
-        return client.recognize_wit(audio, key=witKey).lower()
+        return r.recognize_wit(audio, key=witKey).lower()
     elif config.speechRecognizer == "whisperOnline":
-        transcription = client.audio.transcriptions.create(model="whisper-1", file=audio)
+        transcription = r.audio.transcriptions.create(model="whisper-1", file=audio)
         return transcription.text
     elif config.speechRecognizer == "witAI":
         response = client.speech(f, {'Content-Type': 'audio/wav'})
@@ -135,19 +136,22 @@ def initialise():
         from openai import OpenAI 
         return OpenAI()
     else: 
-        return sr.Recognizer()
+        return
+        
 
-def act(client):
-    with sr.Microphone() as source:
+# def act(r, client):
+def act():
+    with r.Microphone() as source:
         while True:
-            audio = client.listen(source)
+            audio = r.listen(source, 12, 7)
             # Record speech and save it
             with open("microphone-results.wav", "wb") as recording:
                 recording.write(audio.get_wav_data())
             # Process speech
             print("Done recording")
             channel.basic_publish(exchange='', routing_key='servo', body="sus")
-            recognition = recognizeSpeech(audio, client)
+            # recognition = recognizeSpeech(audio, r, client)
+            recognition = recognizeSpeech(audio)
             # Clean text
             query = cleanText(recognition)
             print(query)
@@ -204,6 +208,8 @@ def wakeUp(recognizer):
             for wakeUpWord in config.wakeWords:
                 if wakeUpWord in cleanQuery:
                     return True
+        else:
+            print("Something went wrong - method wakeUp")
 
 def actLoop():
     while True:
@@ -213,7 +219,8 @@ def actLoop():
         timeOutLimit = 4
         while acted == False and timeOut < timeOutLimit:
             channel.basic_publish(exchange='', routing_key='servo', body="rest")
-            acted = act(client)
+            # acted = act(r, client)
+            acted = act()
             if acted == False:
                 timeOut += 1
                 if timeOut == timeOutLimit:
@@ -225,13 +232,17 @@ def actLoop():
         return
 
 
-def main(client):
+# def main(r, client):
+def main():
     if config.wakeWordDetector == "custom":
         # relativePath = "speech_driver/vosk/vosk-model-nl-spraakherkenning-0.6-lgraph"
         relativePath = "speech_driver/vosk/vosk-model-small-nl-0.22"
         model = Model(relativePath)
         recognizer = KaldiRecognizer(model, 16000)
         with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source, duration = 1)
+            # r.pause_threshold = 0.8
+            r.pause_threshold = 2
             os.system('cls' if os.name == 'nt' else 'clear')
             print("Ready to go")
             awake = False
@@ -259,10 +270,12 @@ if config.speechRecognizer == "witSR" or config.speechRecognizer == "witAI":
     witKeyFile = open("witkey.txt", "r")
     witKey = witKeyFile.readline().rstrip()
     witKeyFile.close() 
+r = sr.Recognizer()
 client = initialise()
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
 channel.queue_declare(queue='servo')
 channel.queue_declare(queue='audio_output')
 while True:
-    main(client)
+    # main(r, client)
+    main()
