@@ -33,7 +33,7 @@ cd ~/Desktop/
 mkdir piper
 cd piper
 wget https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_arm64.tar.gz
-wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx?download=true
+wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx
 cd ..
 mkdir vosk
 cd vosk
