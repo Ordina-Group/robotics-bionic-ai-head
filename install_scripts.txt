@@ -1,24 +1,12 @@
 sudo apt update
-sudo apt install wget maven python3.12 rabbitmq-server audacity portaudio19-dev flac
+sudo apt install wget maven python3.11 rabbitmq-server portaudio19-dev flac
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install nodejs -y
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
-wget https://download.oracle.com/java/21/latest/jdk-21_linux-aarch64_bin.tar.gz
-tar -xvf jdk-21_linux-aarch64_bin.tar.gz
-cd jdk-21.0.1
-sudo mkdir -p /usr/local/jdk-21
-sudo mv * /usr/local/jdk-21
-cd ..
-cd /usr/lib/python3.12
+cd /usr/lib/python3.11
 sudo rm EXTERNALLY-MANAGED
 cd ~
-wget https://download.jetbrains.com/idea/ideaIU-2023.2.5.tar.gz
-tar -xvf ideaIU-2023.2.5.tar.gz
-source ~/.bashrc
-echo 'export JAVA_HOME=/usr/local/jdk-21' >> ~/.bashrc
-echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
 sudo apt update
 sudo apt upgrade
 pip3 install adafruit-blinka
