@@ -81,7 +81,6 @@ def cleanText(query):
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
     
-# def recognizeSpeech(audio, r, client):
 def recognizeSpeech(audio):
     """This method recognizes user input with speech depending on config.speechRecognizer, which defaults to whisper."""
     
@@ -132,22 +131,18 @@ def initialise():
         return
         
 
-# def act(r, client):
 def act():
     """This method makes the head act. It is the loop that will be used the most."""
     
     with r.Microphone() as source:
         while True:
             audio = r.listen(source, 12, 7)
-            # Record speech and save it
             with open("microphone-results.wav", "wb") as recording:
                 recording.write(audio.get_wav_data())
             duration = librosa.get_duration(path="microphone-results.wav")
             if duration > 1:
-                # Process speech
                 print("Done recording")
                 channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
-                # recognition = recognizeSpeech(audio, r, client)
                 recognition = recognizeSpeech(audio)
                 query = cleanText(recognition)
                 foundIntent = findIntent(query)
@@ -155,9 +150,7 @@ def act():
                 shouldReply = foundIntent["responseWanted"]
                 topic = foundIntent["topic"]
                 if shouldReply == True:
-                    # Come up with response:
                     response = respond(intent, topic, query)
-                    # Speak:
                     channel.basic_publish(exchange="", routing_key="hub", body="speak:" + response)
                     if topic != "unknown":
                         return True
@@ -168,12 +161,13 @@ def act():
                         channel.basic_publish(exchange="", routing_key="hub", body="move:" + intent)
                         return True
                     else:
+                        channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
                         print("Ik heb je niet goed verstaan. Probeer het nog eens.")
             
 
-# Implementation for fast speech recognition. Uses VOSK and only used for wake word detection.
 def wakeUp(recognizer):
-    """This method starts a while True loop that is constantly checking to see if the robot should wake up or not."""
+    """This method starts a while True loop that is constantly checking to see if the robot should wake up or not.
+    It uses VOSK to detect speech input and is only used if config.wakeWordDetector == custom."""
     
     mic = pyaudio.PyAudio()
     stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
@@ -194,13 +188,11 @@ def actLoop():
     """This method starts a loop where the robothead does things."""
     
     while True:
-        print("Awake")
         acted = False
         timeOut = 0
         timeOutLimit = 4
         while acted == False and timeOut < timeOutLimit:
             channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
-            # acted = act(r, client)
             acted = act()
             if acted == False:
                 timeOut += 1
@@ -213,17 +205,13 @@ def actLoop():
         return
 
 
-# def main(r, client):
 def main():
     if config.wakeWordDetector == "custom":
-        # relativePath = "speech_driver/vosk/vosk-model-nl-spraakherkenning-0.6-lgraph"
-        relativePath = "speech_driver/vosk/vosk-model-small-nl-0.22"
-        model = Model(relativePath)
+        model = Model("speech_driver/vosk/vosk-model-small-nl-0.22")
         recognizer = KaldiRecognizer(model, 16000)
         with sr.Microphone() as source:
             r.adjust_for_ambient_noise(source, duration = 1)
-            # r.pause_threshold = 0.8
-            r.pause_threshold = 2
+            r.pause_threshold = 2 # default is 0.8
             os.system("cls" if os.name == "nt" else "clear")
             print("Ready to go")
             awake = False
@@ -259,5 +247,4 @@ channel.queue_declare(queue="servo")
 channel.queue_declare(queue="audio_output")
 channel.queue_declare(queue="hub")
 while True:
-    # main(r, client)
     main()
