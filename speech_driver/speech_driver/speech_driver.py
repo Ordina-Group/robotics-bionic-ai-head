@@ -5,10 +5,7 @@ import config
 import topics
 from funfacts import funFacts
 from jokes import jokes
-from invoke import run
 from pydub import AudioSegment
-from pydub.playback import play
-import librosa
 from vosk import Model, KaldiRecognizer
 import os
 import pika
@@ -99,26 +96,6 @@ def recognizeSpeech(audio):
         return response
     elif config.speechRecognizer == "vosk":
         raise Exception("Not implemented yet")
-    
-def speak(text):
-    """This method generates speech and pronounces it. It should be moved to a seperate driver."""
-    
-    if config.speechSynthesizer == "piper":
-        if os.name == "nt":
-            command = "echo " + text + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
-        else:
-            command = "echo " + text + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
-        run(command, hide=True, warn=True)
-        filePath = "soundbyte.wav"
-        audio = AudioSegment.from_file(filePath, format="wav")
-        duration = librosa.get_duration(path=filePath)
-        durationMs = round(duration * 10)
-        command = "speak:" + str(durationMs)
-        channel.basic_publish(exchange="", routing_key="servo", body=command)
-        channel.basic_publish(exchange="", routing_key="audio_output", body=filePath)
-        # return audio
-        play(audio)
-
 
 def respond(intent, topic, text):
     """This method generates a response, depending on config.responseGenerator, which defaults to custom. Most of the alternatives have not been implemented yet."""
@@ -166,7 +143,7 @@ def act():
                 recording.write(audio.get_wav_data())
             # Process speech
             print("Done recording")
-            channel.basic_publish(exchange="", routing_key="servo", body="sus")
+            channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
             # recognition = recognizeSpeech(audio, r, client)
             recognition = recognizeSpeech(audio)
             # Clean text
@@ -181,31 +158,14 @@ def act():
                 # Come up with response:
                 response = respond(intent, topic, query)
                 # Speak:
-                speak(response)
+                channel.basic_publish(exchange="", routing_key="hub", body="speak:" + response)
                 if topic != "unknown":
                     return True
                 else:
                     return False
             else:
-                if intent == "sleep":
-                    # sleep
-                    print("Going to sleep")
-                    channel.basic_publish(exchange="", routing_key="servo", body=intent)
-                    return True
-                elif intent == "nod":
-                    # nod
-                    print("nodding")
-                    channel.basic_publish(exchange="", routing_key="servo", body=intent)
-                    return True
-                elif intent == "shake":
-                    # shake
-                    print("shaking")
-                    channel.basic_publish(exchange="", routing_key="servo", body=intent)
-                    return True
-                elif intent == "laugh":
-                    # laugh
-                    print("laughing")
-                    channel.basic_publish(exchange="", routing_key="servo", body=intent)
+                if intent == "sleep" or intent == "nod" or intent == "shake" or intent == "laugh":
+                    channel.basic_publish(exchange="", routing_key="hub", body="move:" + intent)
                     return True
                 else:
                     print("Ik heb je niet goed verstaan. Probeer het nog eens.")
@@ -239,7 +199,7 @@ def actLoop():
         timeOut = 0
         timeOutLimit = 4
         while acted == False and timeOut < timeOutLimit:
-            channel.basic_publish(exchange="", routing_key="servo", body="rest")
+            channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
             # acted = act(r, client)
             acted = act()
             if acted == False:
@@ -270,7 +230,7 @@ def main():
             while True:
                 wakeUp(recognizer)
                 actLoop()
-                channel.basic_publish(exchange="", routing_key="servo", body="sleep")
+                channel.basic_publish(exchange="", routing_key="hub", body="move:sleep")
     elif config.wakeWordDetector == "snowboy":
         while True:
             print("")
@@ -297,6 +257,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost")
 channel = connection.channel()
 channel.queue_declare(queue="servo")
 channel.queue_declare(queue="audio_output")
+channel.queue_declare(queue="hub")
 while True:
     # main(r, client)
     main()

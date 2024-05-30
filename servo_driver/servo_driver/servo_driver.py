@@ -14,9 +14,9 @@ import time
 
 def main():
     kit = ServoKit(channels=16)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
     channel = connection.channel()
-    channel.queue_declare(queue='servo')
+    channel.queue_declare(queue="servo")
     
     def move(pos):
         for field, value in asdict(pos).items():
@@ -163,21 +163,21 @@ def main():
     # Here we define what possible commands can be sent to the driver.
     # If future developers add new methods, make sure to add them to this dictionary.
     commands = {
-        'rest': rest,
-        'close_eyes': close_eyes,
-        'open_eyes': open_eyes,
-        'all90': all90,
-        'nod': nod,
-        'shake': shake,
-        'blink': blink,
-        'laugh': laugh,
-        'demo': demo,
-        'sleep': sleep,
-        'sus': sus
+        "rest": rest,
+        "close_eyes": close_eyes,
+        "open_eyes": open_eyes,
+        "all90": all90,
+        "nod": nod,
+        "shake": shake,
+        "blink": blink,
+        "laugh": laugh,
+        "demo": demo,
+        "sleep": sleep,
+        "sus": sus
     }
     
     def callback(ch, method, properties, body):
-        instructions = body.decode().split(':')
+        instructions = body.decode().split(":")
         print(f" [x] Received {instructions}")
         if instructions[0] == "speak":
             speak(instructions[1])
@@ -193,17 +193,17 @@ def main():
             print("Unknown command: %s" % (instructions[0]))
         ch.basic_ack(delivery_tag=method.delivery_tag)
     
-    channel.basic_consume(queue='servo', on_message_callback=callback)
+    channel.basic_consume(queue="servo", on_message_callback=callback)
 
-    print(' [*] Waiting for messages. To exit, press CTRL+C')
+    print(" [*] Waiting for messages. To exit, press CTRL+C")
     channel.start_consuming()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print('Interrupted')
+        print("Interrupted")
         try:
             sys.exit(0)
         except SystemExit:

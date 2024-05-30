@@ -1,5 +1,5 @@
 # How to config:
-# There's a few variables that list different options, like synthesizers, recognizers and voskModels. These list a few possible options.
+# There's a few variables that list different options, like speechrecognizers and voskModels. These list a few possible options.
 # If you wish to change the selected option, simply change the variable that refers to the list, to refer to another index of the referred-to-list.
 # For example, if you wish to select change the speech recognition solution to vosk, change 
 # 'speechRecognizer = recognizers[0]' to 'speechRecognizer = recognizers[3]'
@@ -21,12 +21,6 @@ wakeWords = ["robot", "melvin"]
 # As of writing, only "custom" has been implemented.
 wakeWordDetectors = ["custom", "snowboy", "porcupine", "raven", "precise"]
 wakeWordDetector = wakeWordDetectors[0]
-
-# Speech synthesis
-synthesizers = ["piper", "option2"]
-speechSynthesizer = synthesizers[0]
-piperVoices = [0,7,8,17,20,40,41,42,44,45,49,50,51]
-piperVoice = piperVoices[0]
 
 # Speech recognition
 recognizers = ["whisper", "whisperOnline", "witSR", "vosk", "witAI"]
