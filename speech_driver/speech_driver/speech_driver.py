@@ -10,6 +10,7 @@ from vosk import Model, KaldiRecognizer
 import os
 import pika
 import random
+import librosa
 
 def findIntent(text):
     """This method finds the intent of the user depending on what they said. This method only gets called if config.speechRecognizer != witAI."""
@@ -141,34 +142,33 @@ def act():
             # Record speech and save it
             with open("microphone-results.wav", "wb") as recording:
                 recording.write(audio.get_wav_data())
-            # Process speech
-            print("Done recording")
-            channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
-            # recognition = recognizeSpeech(audio, r, client)
-            recognition = recognizeSpeech(audio)
-            # Clean text
-            query = cleanText(recognition)
-            print(query)
-            # Decide intent
-            foundIntent = findIntent(query)
-            intent = foundIntent["intent"]
-            shouldReply = foundIntent["responseWanted"]
-            topic = foundIntent["topic"]
-            if shouldReply == True:
-                # Come up with response:
-                response = respond(intent, topic, query)
-                # Speak:
-                channel.basic_publish(exchange="", routing_key="hub", body="speak:" + response)
-                if topic != "unknown":
-                    return True
+            duration = librosa.get_duration(path="microphone-results.wav")
+            if duration > 1:
+                # Process speech
+                print("Done recording")
+                channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
+                # recognition = recognizeSpeech(audio, r, client)
+                recognition = recognizeSpeech(audio)
+                query = cleanText(recognition)
+                foundIntent = findIntent(query)
+                intent = foundIntent["intent"]
+                shouldReply = foundIntent["responseWanted"]
+                topic = foundIntent["topic"]
+                if shouldReply == True:
+                    # Come up with response:
+                    response = respond(intent, topic, query)
+                    # Speak:
+                    channel.basic_publish(exchange="", routing_key="hub", body="speak:" + response)
+                    if topic != "unknown":
+                        return True
+                    else:
+                        return False
                 else:
-                    return False
-            else:
-                if intent == "sleep" or intent == "nod" or intent == "shake" or intent == "laugh":
-                    channel.basic_publish(exchange="", routing_key="hub", body="move:" + intent)
-                    return True
-                else:
-                    print("Ik heb je niet goed verstaan. Probeer het nog eens.")
+                    if intent == "sleep" or intent == "nod" or intent == "shake" or intent == "laugh":
+                        channel.basic_publish(exchange="", routing_key="hub", body="move:" + intent)
+                        return True
+                    else:
+                        print("Ik heb je niet goed verstaan. Probeer het nog eens.")
             
 
 # Implementation for fast speech recognition. Uses VOSK and only used for wake word detection.

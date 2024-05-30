@@ -26,9 +26,8 @@ def main():
                 else:
                     command = "echo " + text + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
                 run(command, hide=True, warn=True)
-                filePath = "soundbyte.wav"
-                audio = AudioSegment.from_file(filePath, format="wav")
-                duration = librosa.get_duration(path=filePath)
+                audio = AudioSegment.from_file("soundbyte.wav", format="wav")
+                duration = librosa.get_duration(path="soundbyte.wav")
                 durationMs = round(duration * 10)
                 channel.basic_publish(exchange="", routing_key="hub", body="talk:" + str(durationMs))
                 play(audio)
