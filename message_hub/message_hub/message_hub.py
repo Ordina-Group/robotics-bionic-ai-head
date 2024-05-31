@@ -3,6 +3,10 @@ import os
 import sys
 
 def main():
+    """
+    Message hub receives messages from different parts of the application, then forwards those messages to appropriate parts.
+    """
+    
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
     channel = connection.channel()
     channel.queue_declare(queue="hub")
@@ -10,6 +14,11 @@ def main():
     channel.queue_declare(queue="audio_output")
     
     def callback(ch, method, properties, body):
+        """
+        callback() uses the standard RabbitMQ protocol, then decides where to send the message, and formats it accordingly.
+        expects body to be formatted as '{command}:{details}'. Example: 'speak:10', where 10 is the amount of deciseconds (0.1 of a second).
+        """
+        
         instructions = body.decode().split(":")
         if len(instructions) != 2:
             raise Exception("Invalid instructions sent to hub - instructions formatted wrong.")

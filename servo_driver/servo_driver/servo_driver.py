@@ -9,10 +9,58 @@ from dataclasses import dataclass, fields, asdict
 import time
 # import asyncio
 # import aio_pika
-# I have these commented out, as to indicate a desire to make everything asynchronous. This way, the head can move more naturally. As for now, it's a sequential driver, as I'm struggling to understand asynchronity.
-
 
 def main():
+    """
+    Class to control the servomotors. 
+    
+    ...
+    
+    Methods
+    -------
+    move(pos)
+        moves a servomotor to a certain angle, depending on the dictionary passed to it.
+        is frequently called by other methods in the class to perform the movement itself
+        
+        Parameters
+        ----------
+        pos: dict(field: string, value: integer)
+            represents a servomotor, called by its name as detailed in servo_config.py, the integer is the desired angle
+    -----------            
+    rest()
+        moves all servomotors to their default position
+    close_eyes()
+        sends a signal to move corresponding servomotors to close the robot's eyes.
+    open_eyes()
+        sends a signal to move corresponding servomotors to open the robot's eyes.
+    all_90()
+        sends a signal to all servomotors to be positioned in a 90 degree angle. Only used during assembly of the robot, as all servomotors need to be angled correctly before assembly.
+    sleep()
+        sends a signal to all servomotors to move to predetermined sleeping position.
+    sus()
+        sends a signal to all servomotors to move to predetermined 'sus' position. Used to signal the robot is thinking.
+    speak(duration: int)
+        makes the robots mouth move for duration (in deciseconds - 0.1 of a second) to make it look like the robot is talking. Makes the eyes blink every 0.8 seconds.
+    nod()
+        sends a signal to the corresponding servomotors to let the head 'nod' yes, as if agreeing with something.
+    shake()
+        sends a signal to the corresponding servomotors to let the head 'shake' no, as if disagreeing with something.
+    blink()
+        sends a signal to rapidly close then open the robot's eyes.
+    laugh()
+        sends a signal to the corresponding servomotors to appear laughing.
+    manualWithName(servoName: string, angle: int)
+        moves servomotor with corresponding name to corresponding angle. Used for debugging.
+    manualWithnumber(servo_number: int, angle: int)
+        moves servomotor with pinNr equal to servo_number to corresponding angle. Used for debugging.
+    configure(servo_number: int):
+        moves servomotor with corresponding pinNr back and forth. Used for debugging and finding out which servomotor does what.
+    findPinNumber(servoMotorName: string)
+        looks through the config file to find what pin number corresponds to servomotor with corresponding name.
+    callback(ch, method, properties, body):
+        default RabbitMQ callback method for communicating. 
+    """
+    
     kit = ServoKit(channels=16)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
     channel = connection.channel()
@@ -61,38 +109,6 @@ def main():
                 time.sleep(0.1)
                 i += 1
         move(movement_data.mouthShut)
-
-    def demo():
-        rest()
-        time.sleep(3.5)
-        blink()
-        time.sleep(0.1)
-        blink()
-        move(movement_data.mouthOpen2)
-        time.sleep(0.1)
-        move(movement_data.mouthShut)
-        time.sleep(0.3)
-        blink()
-        speak(7)
-        time.sleep(0.3)
-        speak(8)
-        time.sleep(0.2)
-        speak(7)
-        blink()
-        time.sleep(0.1)
-        speak(6)
-        time.sleep(0.2)
-        speak(6)
-        blink()
-        time.sleep(0.5)
-        speak(19)
-        blink()
-        time.sleep(0.3)
-        speak(7)
-        time.sleep(1)
-        blink()
-        speak(10)
-        blink()
 
     def nod():
         close_eyes()

@@ -13,7 +13,9 @@ import random
 import librosa
 
 def findIntent(text):
-    """This method finds the intent of the user depending on what they said. This method only gets called if config.speechRecognizer != witAI."""
+    """
+    This method finds the intent of the user depending on what they said. This method only gets called if config.speechRecognizer != witAI.
+    """
     
     if config.speechRecognizer != "witAI":
         for tw in config.jobTriggerWords:
@@ -184,13 +186,12 @@ def wakeUp(recognizer):
         else:
             print("Something went wrong - method wakeUp")
 
-def actLoop():
+def actLoop(timeOutLimit = 4):
     """This method starts a loop where the robothead does things."""
     
     while True:
         acted = False
         timeOut = 0
-        timeOutLimit = 4
         while acted == False and timeOut < timeOutLimit:
             channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
             acted = act()
@@ -206,6 +207,34 @@ def actLoop():
 
 
 def main():
+    """
+    Class to control the microphone connected to the hardware.
+    Listens to what the user says, then acts accordingly.
+    All configured through config.py
+    
+    ...
+    
+    Methods:
+    --------
+    findIntent(text: string)
+        Finds the user's intentions through filtering for certain triggerwords. Used only if config.speechRecognizer != witAI.
+    cleanWakeUp(query: string)
+        Cleans up a WakeUp Query by looking for words the application commonly mistakes when saying the WakeWord. Only used if config.wakeWordDetector == custom.
+        Added because VOSK does not easily support a custom dictionary.
+    cleanText(query: string)
+        Cleans up a query by comparing words to a list of words the application gets wrong often when saying words like 'Ordina' or 'Sopra Steria'.
+    recognizeSpeech(audio: audiofile)
+        Recognises user input speech, using a solution depending on config.py.
+    initialise()
+        Creates an instance of WitAI or online WhisperAPI if necessary. Due to not having a license for WhisperAPI, only WitAI works and only on Marten Elsinga's Wit App. Contact me if necessary.
+    act()
+        After waking up, tries to record speech to then be sent to recognizeSpeech(), then decides if it should respond or not.
+    wakeUp(recognizer: speech_recognition.recognizer_instance)
+        Continuous while True loop to see if the robot has to wake up. Uses VOSK by default.
+    actLoop(timeOutLimit: int)
+        Starts a continuous while True loop that checks if act() has successfully been called. If not successful after timeOutLimit (default = 4) or if successfully called act(), returns out of the loop.
+    """
+    
     if config.wakeWordDetector == "custom":
         model = Model("speech_driver/vosk/vosk-model-small-nl-0.22")
         recognizer = KaldiRecognizer(model, 16000)

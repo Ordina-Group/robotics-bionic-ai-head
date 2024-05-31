@@ -7,11 +7,12 @@
 # After the topics list follows the information you wish to share with the crowd. Change according to need.
 
 # IMPORTANT!!!
-# If you add a new topic, make sure to add the of the dictionary to the 'InformationClass' class,
-# and make a corresponding method. These get called dynamically when information gets requested.
+# If you add a new topic, make sure to add the name of the dictionary to the 'information' list,
+# and make a corresponding if-statement in speech_driver - findIntent(text).
 # ALSO IMPORTANT!!
 # If you decide to use Piper tts, some of the voices act weird if a sentence has too little words.
-# Therefore, instead of ending the sentence (.), use a comma (,) to prolong it.
+# Therefore, instead of ending the sentence (.), use a comma (,) to prolong it. It also tends to get weird around apostrophes ('), so try and avoid those too
+# If struggling with using Piper, the maker of the package is called 'synthmike' on Reddit and was very friendly when I asked him a few questions.
 
 office = {"triggerWords": ["kantoor", "kantoren", "locaties", "kantor"], "topic": "kantoor"}
 staff = {"triggerWords": ["personeel", "collega's", "collega", "medewerker", "medewerkers"], "topic": "personeel"}

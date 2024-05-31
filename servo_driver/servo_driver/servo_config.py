@@ -3,6 +3,25 @@ from dataclasses import dataclass
 
 @dataclass
 class ServoMotor:
+    """
+    ServoMotor is a configuration class, used to represent the different servo motors used in the robot head.
+    
+    ...
+    
+    Attributes
+    ----------
+    pinNr: int
+        an integer corresponding to the signal pins on the Adafruit PCA9685
+    defaultRotation: int
+        an integer representing the 'resting' position for the servomotor
+    minRotation: int
+        an integer of how far the servomotor should be able to rotate without risking damage to the plastic
+    maxRotation: int
+        an integer of how far the servomotor should be able to rotate without risking damage to the plastic
+    name: str
+        a string representing the position of the servomotor. Example: "eyeLeft" corresponds to the left eye of the head
+    """
+    
     pinNr: int
     defaultRotation: int
     minRotation: int

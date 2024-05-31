@@ -6,6 +6,35 @@ import servo_config as conf
 
 @dataclass
 class Position:
+    """
+    A class used to represent a 'facial expression' for the head.
+    Each instance is a certain position all the servomotors should rotate to.
+    Generally  these are dependent on the servo_configs minRotation and maxRotation.
+    
+    ...
+    
+    Attributes
+    ----------
+    eyeLeft: Optional[int]
+        an optional integer between 0 and 180 representing the left eye's rotation - goes left to right.
+    eyeRight: Optional[int]
+        an optional integer between 0 and 180 representing the right eye's rotation - goes left to right.
+    eyeLeftOpen: Optional[int]
+        an optional integer between 0 and 180 representing how far the left eye is opened.
+    eyeRightOpen: Optional[int]
+        an optional integer between 0 and 180 representing how far the right eye is opened.
+    eyesUpDown: Optional[int]
+        an optional integer between 0 and 180 representing how far both eyes are pointing up or down.
+    mouth: Optional[int]
+        an optional integer between 0 and 180 representing how far the jaw gets opened.
+    headTilt: Optional[int]
+        an optional integer between 0 and 180 representing how far the head looks up or down.
+    headSwivel: Optional[int]
+        an optional integer between 0 and 180 representing how far the head looks left or right.
+    headPivot: Optional[int]
+        an optional integer between 0 and 180 representing how far the head is angled diagonally, like puppies do.
+    """
+    
     eyeLeft: Optional[int]
     eyeRight: Optional[int]
     eyeLeftOpen: Optional[int]

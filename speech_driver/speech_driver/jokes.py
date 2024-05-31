@@ -1,3 +1,5 @@
+# A list filled with bad jokes, mostly about programming. 
+
 jokes = ["Wat is rood en slecht voor je tanden, een baksteen",\
 "hoeveel programmeurs zijn nodig om een lamp te vervangen, geen het is een hardware probleem",\
 "twee programmeurs voeren een gesprek, zegt de ene tegen de ander ik krijg mijn oven niet aan de praat, zegt de ander welke foutmelding krijg je",\
