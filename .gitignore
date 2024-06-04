@@ -1,6 +1,12 @@
 /message_hub/target/
 !.mvn/wrapper/maven-wrapper.jar
-
+/speech_driver/proofs-of-concept/witkey.txt
+/speech_driver/speech_driver/witkey.txt
+/speech_driver/proofs-of-concept/microphone-results.wav
+/speech_driver/vosk/
+/speech_driver/proofs-of-concept/model/
+/speech_driver/proofs-of-concept/proof-of-concept/espeak-ng-data/
+/speech_driver/proofs-of-concept/proof-of-concept/nl_NL-mls-medium.onnx.onnx
 ### STS ###
 .apt_generated
 .classpath
@@ -181,3 +187,5 @@ README.html
 out/
 .micronaut/
 /message_hub/target/
+speech_driver/proofs-of-concept/tts_test/soundbyte.wav
+test/fietje-2-chat/

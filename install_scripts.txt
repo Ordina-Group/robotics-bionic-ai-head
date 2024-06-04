@@ -1,24 +1,12 @@
 sudo apt update
-sudo apt install wget maven python3.11 rabbitmq-server audacity portaudio19-dev flac
+sudo apt install wget maven python3.11 rabbitmq-server portaudio19-dev flac
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install nodejs -y
 sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
-wget https://download.oracle.com/java/21/latest/jdk-21_linux-aarch64_bin.tar.gz
-tar -xvf jdk-21_linux-aarch64_bin.tar.gz
-cd jdk-21.0.1
-sudo mkdir -p /usr/local/jdk-21
-sudo mv * /usr/local/jdk-21
-cd ..
 cd /usr/lib/python3.11
 sudo rm EXTERNALLY-MANAGED
 cd ~
-wget https://download.jetbrains.com/idea/ideaIU-2023.2.5.tar.gz
-tar -xvf ideaIU-2023.2.5.tar.gz
-source ~/.bashrc
-echo 'export JAVA_HOME=/usr/local/jdk-21' >> ~/.bashrc
-echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
 sudo apt update
 sudo apt upgrade
 pip3 install adafruit-blinka
@@ -35,14 +23,26 @@ pip3 install SpeechRecognition
 pip3 install pyaudio
 pip3 install SpeechRecognition[whisper-local]
 pip3 install piper-tts
+pip3 install invoke
+pip3 install fabric
+pip3 install librosa
+pip3 install pydub
+pip3 install vosk
+
 cd ~/Desktop/
-mkdir piper_tts_model
-cd piper_tts_model
-wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx?download=true
-wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx.json?download=true.json
+mkdir piper
+cd piper
+wget https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_arm64.tar.gz
+wget https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/nl/nl_NL/mls/medium/nl_NL-mls-medium.onnx
+cd ..
+mkdir vosk
+cd vosk
+wget https://alphacephei.com/vosk/models/vosk-model-small-nl-0.22.zip
+wget https://alphacephei.com/vosk/models/vosk-model-nl-spraakherkenning-0.6-lgraph.zip
 cd ..
 
 --------------------------------------------------------------------------------------------------------------
 
 sudo raspi-config
 Interface options -> i2c -> Enable -> Yes -> Finish
+Interface options -> ssh -> Enable -> Yes -> Finish
