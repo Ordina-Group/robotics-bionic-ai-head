@@ -119,6 +119,18 @@ def respond(intent, topic, text):
             random.seed(time.time())
             fact = random.choice(funFacts)
             return "Wist je dat " + fact
+    else:
+        if config.responseGenerator == "fietje":
+            command = "echo " + text + " | ollama run bramvanroy/fietje-2b-chat:Q3_K_M > output.txt"
+        elif config.responseGenerator == "llama":
+            command = "echo " + text + " | ollama run llama3 > output.txt"
+        elif config.responseGenerator == "geitje":
+            command = "echo " + text + " | ollama run bramvanroy/geitje-7b-ultra-gguf > output.txt"
+        run(command, hide=True, warn=True)
+        file = file = open("output.txt", "r")
+        text = file.read()
+        file.close()
+        return text
             
 def initialise():
     """This method initialises witAI or whisperOnline if necessary."""

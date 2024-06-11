@@ -44,7 +44,8 @@ sleepTriggerWords = ["slaap", "slapen"]
 
 # Response GeneratorExit
 # As of writing, only "custom" has been implemented, due to the hardware restrictions of the Raspberry Pi 4b.
-responseGenerators = ["custom", "llama", "geitje", "chatgpt", "claude", "fietje", "gpt-nl"]
+# Would like to add support for chatgpt, claude, gpt-nl - but have not yet due to lack of license
+responseGenerators = ["custom", "llama", "geitje", "fietje"]
 responseGenerator = responseGenerators[0]
 
 # Prompt for online models, for increased accuracy

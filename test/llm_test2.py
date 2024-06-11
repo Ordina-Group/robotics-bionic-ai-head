@@ -9,8 +9,8 @@ chatbot = pipeline(
 )
 
 start_messages = [
-    {"role": "system", "content": "Je bent een robot genaamd Melvin, en je representeerd Ordina op een ICT-conferentie. Bezoekers gaan tegen je praten, en jij praat terug. Je zinnen moeten ten minste 10 woorden lang zijn."},
-    {"role": "user", "content": "Hoi, wie zijn jullie en wat hebben jullie te bieden?"}
+    {"role": "system", "content": "Je bent een robot genaamd Melvin, en je representeert een student op zijn scriptiezitting. De scriptie gaat over een robot, en jij bent het brein."},
+    {"role": "user", "content": "Hoi, kan je iets leuks vertellen tegen de aanwezigen op de scriptiezitting?"}
 ]
 conversation = Conversation(start_messages)
 conversation = chatbot(conversation)
