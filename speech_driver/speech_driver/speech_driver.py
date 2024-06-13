@@ -8,6 +8,7 @@ from jokes import jokes
 from pydub import AudioSegment
 from vosk import Model, KaldiRecognizer
 import os
+import signal
 import pika
 import random
 import librosa
@@ -148,7 +149,7 @@ def initialise():
 def act():
     """This method makes the head act. It is the loop that will be used the most."""
     
-    with r.Microphone() as source:
+    with sr.Microphone() as source:
         while True:
             audio = r.listen(source, 12, 7)
             with open("microphone-results.wav", "wb") as recording:
@@ -195,8 +196,6 @@ def wakeUp(recognizer):
             for wakeUpWord in config.wakeWords:
                 if wakeUpWord in cleanQuery:
                     return True
-        else:
-            print("Something went wrong - method wakeUp")
 
 def actLoop(timeOutLimit = 4):
     """This method starts a loop where the robothead does things."""
