@@ -160,6 +160,7 @@ def act():
                 channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
                 recognition = recognizeSpeech(audio)
                 query = cleanText(recognition)
+                print(query)
                 foundIntent = findIntent(query)
                 intent = foundIntent["intent"]
                 shouldReply = foundIntent["responseWanted"]
@@ -284,7 +285,6 @@ client = initialise()
 connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
 channel = connection.channel()
 channel.queue_declare(queue="servo")
-channel.queue_declare(queue="audio_output")
 channel.queue_declare(queue="hub")
 while True:
     main()

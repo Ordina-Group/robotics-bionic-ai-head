@@ -40,6 +40,7 @@ cd vosk
 wget https://alphacephei.com/vosk/models/vosk-model-small-nl-0.22.zip
 wget https://alphacephei.com/vosk/models/vosk-model-nl-spraakherkenning-0.6-lgraph.zip
 cd ..
+curl -fsSL https://ollama.com/install.sh | sh
 
 --------------------------------------------------------------------------------------------------------------
 
