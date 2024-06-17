@@ -30,6 +30,7 @@ def main():
     channel.queue_declare(queue="hub")
     
     def callback(ch, method, properties, body):
+        print("Message received! " + body.decode())
         instructions = body.decode().split(":")
         if len(instructions) != 2:
             raise Exception("Invalid instructions sent to audio driver - instructions formatted wrong.")
