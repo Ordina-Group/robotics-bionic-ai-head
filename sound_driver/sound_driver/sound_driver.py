@@ -6,7 +6,7 @@ import time
 from pydub import AudioSegment
 from pydub.playback import play
 from invoke import run
-import config
+import sound_driver.sound_driver.config as config
 import librosa
 
 def main():

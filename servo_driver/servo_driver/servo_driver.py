@@ -1,10 +1,10 @@
 import os
 import pika
 import sys
-import servo_config as config
+import servo_driver.servo_driver.servo_config as servo_config
 from random import choice
 from adafruit_servokit import ServoKit
-import movement_data
+import servo_driver.servo_driver.movement_data
 from dataclasses import dataclass, fields, asdict
 import time
 # import asyncio
@@ -171,7 +171,7 @@ def main():
 
         
     def findPinNumber(servoMotorName):
-        servoMotors = [config.eyeLeft, config.eyeRight, config.eyeLeftOpen, config.eyeRightOpen, config.eyesUpDown, config.mouth, config.headTilt, config.headSwivel, config.headPivot]
+        servoMotors = [servo_config.eyeLeft, servo_config.eyeRight, servo_config.eyeLeftOpen, servo_config.eyeRightOpen, servo_config.eyesUpDown, servo_config.mouth, servo_config.headTilt, servo_config.headSwivel, servo_config.headPivot]
         for servoMotor in servoMotors:
             if servoMotorName == servoMotor.name:
                 return servoMotor.pinNr, servoMotor.minRotation, servoMotor.maxRotation
