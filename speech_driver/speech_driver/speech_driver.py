@@ -16,6 +16,16 @@ import librosa
 import asyncio
 import aio_pika
 
+channel = None
+
+async def publish(message, routing_key):
+    connection = await aio_pika.connect("amqp://guest:guest@localhost")
+    async with connection:
+        channel = await connection.channel()
+        await channel.set_qos(prefetch_count=10)
+        await channel.default_exchange.publish(aio_pika.Message(body=message.encode()), routing_key=routing_key)
+        return
+
 async def findIntent(text):
     """
     This method finds the intent of the user depending on what they said. This method only gets called if speech_config.speechRecognizer != witAI.
@@ -105,7 +115,6 @@ async def recognizeSpeech(audio):
 
 async def respond(intent, topic, text):
     """This method generates a response, depending on speech_config.responseGenerator, which defaults to custom. Most of the alternatives have not been implemented yet."""
-    
     if speech_config.responseGenerator == "custom":
         if intent == "job":
             return "We zijn altijd op zoek naar collegaas, en hoewel ik je zelf niet iets aan kan bieden verwijs ik je graag door naar de mensen die me vandaag hebben meegenomen"
@@ -151,36 +160,37 @@ def initialise():
 
 async def act():
     """This method makes the head act. It is the loop that will be used the most."""
-    
     with sr.Microphone() as source:
         while True:
-            audio = r.listen(source, 12, 7)
+            audio = r.listen(source, 12, 5)
             with open("microphone-results.wav", "wb") as recording:
                 recording.write(audio.get_wav_data())
             duration = librosa.get_duration(path="microphone-results.wav")
             if duration > 1:
                 print("Done recording")
-                channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
+                await publish("move:sus", "hub")
                 recognition = await recognizeSpeech(audio)
                 query = await cleanText(recognition)
                 print(query)
-                foundIntent = findIntent(query)
+                foundIntent = await findIntent(query)
                 intent = foundIntent["intent"]
                 shouldReply = foundIntent["responseWanted"]
                 topic = foundIntent["topic"]
                 if shouldReply == True:
-                    response = respond(intent, topic, query)
-                    channel.basic_publish(exchange="", routing_key="hub", body="speak:" + response)
+                    response = await respond(intent, topic, query)
+                    reply = "speak:" + response
+                    await publish(reply, "hub")
                     if topic != "unknown":
                         return True
                     else:
                         return False
                 else:
                     if intent == "sleep" or intent == "nod" or intent == "shake" or intent == "laugh":
-                        channel.basic_publish(exchange="", routing_key="hub", body="move:" + intent)
+                        reply = "move:" + intent
+                        await publish(reply, "hub")
                         return True
                     else:
-                        channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
+                        await publish("move:rest", "hub")
                         print("Ik heb je niet goed verstaan. Probeer het nog eens.")
             
 
@@ -203,12 +213,11 @@ async def wakeUp(recognizer):
 
 async def actLoop(timeOutLimit = 4):
     """This method starts a loop where the robothead does things."""
-    
     while True:
         acted = False
         timeOut = 0
         while acted == False and timeOut < timeOutLimit:
-            channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
+            await publish("move:rest", "hub")
             acted = await act()
             if acted == False:
                 timeOut += 1
@@ -248,7 +257,16 @@ async def main():
         Continuous while True loop to see if the robot has to wake up. Uses VOSK by default.
     actLoop(timeOutLimit: int)
         Starts a continuous while True loop that checks if act() has successfully been called. If not successful after timeOutLimit (default = 4) or if successfully called act(), returns out of the loop.
-    """
+    """    
+    global client
+    client = initialise()
+    global r
+    r = sr.Recognizer()
+    if speech_config.speechRecognizer == "witSR" or speech_config.speechRecognizer == "witAI":
+        witKeyFile = open("witkey.txt", "r")
+        global witKey
+        witKey = witKeyFile.readline().rstrip()
+        witKeyFile.close()       
     
     if speech_config.wakeWordDetector == "custom":
         model = Model("speech_driver/vosk/vosk-model-small-nl-0.22")
@@ -260,9 +278,10 @@ async def main():
             print("Ready to go")
             awake = False
             while True:
+                await publish("move:sleep", "hub")
                 await wakeUp(recognizer)
                 await actLoop()
-                channel.basic_publish(exchange="", routing_key="hub", body="move:sleep")
+                await publish("move:sleep", "hub")
     elif speech_config.wakeWordDetector == "snowboy":
         while True:
             print("")
@@ -278,18 +297,6 @@ async def main():
         while True:
             print("")
             # act
-
-if speech_config.speechRecognizer == "witSR" or speech_config.speechRecognizer == "witAI":
-    witKeyFile = open("witkey.txt", "r")
-    witKey = witKeyFile.readline().rstrip()
-    witKeyFile.close() 
-r = sr.Recognizer()
-client = initialise()
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
-channel = connection.channel()
-channel.queue_declare(queue="servo")
-channel.queue_declare(queue="hub")
-
 
 if __name__ == "__main__":
     try:

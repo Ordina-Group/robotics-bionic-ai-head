@@ -7,7 +7,7 @@ async def process_message(message: aio_pika.abc.AbstractIncomingMessage) -> None
 
 
 async def main() -> None:
-    connection = await aio_pika.connect_robust("amqp://guest:guest@127.0.0.1/")
+    connection = await aio_pika.connect_robust("amqp://guest:guest@localhost")
 
     async with connection:
         # Creating channel

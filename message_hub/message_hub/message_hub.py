@@ -2,40 +2,55 @@ import pika
 import os
 import sys
 import asyncio
+import aio_pika
+
+channel = None
+
+async def publish(message, routing_key):
+    connection = await aio_pika.connect("amqp://guest:guest@localhost")
+    async with connection:
+        temp_channel = await connection.channel()
+        await temp_channel.set_qos(prefetch_count=10)
+        temp_queue = await temp_channel.declare_queue(routing_key, auto_delete=False)
+        await temp_channel.default_exchange.publish(aio_pika.Message(body=message.encode()), routing_key=routing_key)
+        return
+
+async def callback(message: aio_pika.abc.AbstractIncomingMessage):
+    async with message.process(ignore_processed=True):
+        await message.ack()
+        print("Hub: Message received: " + message.body.decode())
+        instructions = message.body.decode().split(":")
+        if len(instructions) != 2:
+            raise Exception("Invalid instructions sent to hub - instructions formatted wrong.")
+        if instructions[0] == "speak":
+            reply = "speak:" + instructions[1]
+            await publish(reply, "audio_output")
+        elif instructions[0] == "move":
+            reply = instructions[1]
+            await publish(reply, "servo")
+        elif instructions[0] == "talk":
+            reply = "speak:" + instructions[1]
+            await publish(reply, "servo")
+        else:
+            raise Exception("Invalid instructions sent to hub.")
 
 async def main():
     """
     Message hub receives messages from different parts of the application, then forwards those messages to appropriate parts.
     """
+    connection = await aio_pika.connect_robust("amqp://guest:guest@localhost")
+    async with connection:
+        global channel 
+        channel = await connection.channel()
+        await channel.set_qos(prefetch_count=10)
+        hub_queue = await channel.declare_queue("hub", auto_delete=False)
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
-    channel = connection.channel()
-    channel.queue_declare(queue="hub")
-    channel.queue_declare(queue="servo")
-    channel.queue_declare(queue="audio_output")
-    
-    def callback(ch, method, properties, body):
-        """
-        callback() uses the standard RabbitMQ protocol, then decides where to send the message, and formats it accordingly.
-        expects body to be formatted as '{command}:{details}'. Example: 'speak:10', where 10 is the amount of deciseconds (0.1 of a second).
-        """
-        
-        instructions = body.decode().split(":")
-        if len(instructions) != 2:
-            raise Exception("Invalid instructions sent to hub - instructions formatted wrong.")
-        if instructions[0] == "speak":
-            channel.basic_publish(exchange="", routing_key="audio_output", body="speak:" + instructions[1])
-        elif instructions[0] == "move":
-            channel.basic_publish(exchange="", routing_key="servo", body=instructions[1])
-        elif instructions[0] == "talk":
-            channel.basic_publish(exchange="", routing_key="servo", body="speak:" + instructions[1])
-        else:
-            raise Exception("Invalid instructions sent to hub.")
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    
-    channel.basic_consume(queue="hub", on_message_callback=callback)
-    channel.start_consuming()
-    
+        await hub_queue.consume(callback)
+        try:
+            await asyncio.Future()
+        finally:
+            await connection.close()
+
 if __name__ == "__main__":
     try:
         asyncio.run(main())

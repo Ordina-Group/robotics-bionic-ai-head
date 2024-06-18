@@ -11,6 +11,42 @@ import librosa
 import asyncio
 import aio_pika
 
+channel = None
+
+async def run_command(command):
+    run(command, hide=True, warn=True)
+    return
+
+async def publish(message, routing_key):
+    connection = await aio_pika.connect("amqp://guest:guest@localhost")
+    async with connection:
+        temp_channel = await connection.channel()
+        await temp_channel.set_qos(prefetch_count=10)
+        temp_queue = await temp_channel.declare_queue(routing_key, auto_delete=False)
+        await temp_channel.default_exchange.publish(aio_pika.Message(body=message.encode()), routing_key=routing_key)
+        return
+
+async def callback(message: aio_pika.abc.AbstractIncomingMessage):
+    async with message.process(ignore_processed=True):
+        await message.ack()
+        print("Audio: Message received: " + message.body.decode())
+        instructions = message.body.decode().split(":")
+        if len(instructions) != 2:
+            raise Exception("Invalid instructions sent to audio driver - instructions formatted wrong.")
+        if instructions[0] == "speak":
+            if config.speechSynthesizer == "piper":
+                if os.name == "nt":
+                    command = "echo " + instructions[1] + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
+                else:
+                    command = "echo " + instructions[1] + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
+                await run_command(command)
+                audio = AudioSegment.from_file("sound_driver/sound_driver/soundbyte.wav", format="wav")
+                duration = librosa.get_duration(path="soundbyte.wav")
+                durationMs = round(duration * 10)
+                reply = "talk:" + str(durationMs)
+                await publish(reply, "hub")
+                play(audio)
+
 async def main():
     """
     Class used to control the sound output. Requires the hardware to be connected in any way to a speaker or similiar device.
@@ -25,48 +61,20 @@ async def main():
         checks device type to appropriately call piper through command line using invoke package
         sends a message back to message_hub with the duration of the to-be-spoken text, so the servo_driver can act accordingly.
     """
-    connection = await aio_pika.connect_robust("localhost")    
+    
+    connection = await aio_pika.connect_robust("amqp://guest:guest@localhost")    
 
     async with connection:
+        global channel
         channel = await connection.channel()
         await channel.set_qos(prefetch_count=10)
-        audio_queue = await channel.declare_queue("audio_output", auto_delete=True)
+        audio_queue = await channel.declare_queue("audio_output", auto_delete=False)
     
-    async with queue.iterator() as queue_iter:
-        async for message in queue_iter:
-            async with message.process():
-                print("Message received! " + message.body)
-                instructions = message.body.split(":")
-                if queue.name in message.body.decode():
-                    break
-    
-    # connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
-    # channel = connection.channel()
-    # channel.queue_declare(queue="audio_output")
-    # channel.queue_declare(queue="hub")
-    
-    def callback(ch, method, properties, body):
-        print("Message received! " + body.decode())
-        instructions = body.decode().split(":")
-        if len(instructions) != 2:
-            raise Exception("Invalid instructions sent to audio driver - instructions formatted wrong.")
-        if instructions[0] == "speak":
-            if config.speechSynthesizer == "piper":
-                if os.name == "nt":
-                    command = "echo " + instructions[1] + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
-                else:
-                    command = "echo " + instructions[1] + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
-                run(command, hide=True, warn=True)
-                audio = AudioSegment.from_file("soundbyte.wav", format="wav")
-                duration = librosa.get_duration(path="soundbyte.wav")
-                durationMs = round(duration * 10)
-                channel.basic_publish(exchange="", routing_key="hub", body="talk:" + str(durationMs))
-                play(audio)
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    
-    channel.basic_consume(queue="audio_output", on_message_callback=callback)
-
-    channel.start_consuming()
+        await audio_queue.consume(callback)
+        try:
+            await asyncio.Future()
+        finally:
+            await connection.close()
     
 if __name__ == "__main__":
     try:

@@ -35,7 +35,7 @@ intents = ["job", "inform", "joke", "laugh", "nod", "shake", "sleep", "funfact"]
 jobTriggerWords = ["baan voor me", "ik zoek werk", "werk voor me", "zoek nog een baan", "zoek een baan", "werk voor mij", "baan voor mij", "zoek nog werk",\
 "zoek naar werk", "zoek naar een baan", "vacature open", "factuur open", "baan aanbod", "baan aanbieden", "werk aanbieden", "baan aan bieden", "werk aan bieden"]
 funFactTriggerWords = ["grappig feitje", "leuk feitje", "fun fact", "leuk feit", "grappig feit"]
-informTriggerWords = ["vertel me", "me vertellen", "informatie", "meer weten", "meer vertellen", "iets vertellen", "wat vertellen", "iets weten", "vertellen over", "hoe zit het met", "wat weet je", "vertel over"]
+informTriggerWords = ["vertel me", "me vertellen", "informatie", "meer weten", "meer vertellen", "iets vertellen", "wat vertellen", "iets weten", "vertellen over", "hoe zit het met", "wat weet je", "vertel over", "stellen over"]
 jokeTriggerWords = ["grapje", "grap", "mopje", "mop", "iets grappigs"]
 laughTriggerWords = ["lachen", "lach voor me", "lach eens", "lag voor me", "lag eens"]
 nodTriggerWords = ["knik ja", "ja knikken"]
