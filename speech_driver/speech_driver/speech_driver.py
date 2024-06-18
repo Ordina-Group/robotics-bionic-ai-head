@@ -223,9 +223,9 @@ async def actLoop(timeOutLimit = 4):
                 timeOut += 1
                 if timeOut == timeOutLimit:
                     print("Ik ben per ongeluk wakker geworden geloof ik. Ik ga weer slapen.")
+                    await publish("move:sleep", "hub")
                     return
             else:
-                print("Oké, ik ga weer slapen.")
                 return
         return
 
@@ -277,11 +277,10 @@ async def main():
             os.system("cls" if os.name == "nt" else "clear")
             print("Ready to go")
             awake = False
+            await publish("move:sleep", "hub")
             while True:
-                await publish("move:sleep", "hub")
                 await wakeUp(recognizer)
                 await actLoop()
-                await publish("move:sleep", "hub")
     elif speech_config.wakeWordDetector == "snowboy":
         while True:
             print("")

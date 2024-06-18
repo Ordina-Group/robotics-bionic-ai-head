@@ -13,6 +13,13 @@ import aio_pika
 
 channel = None
 
+async def play_audio(path, file_type):
+    #audio = AudioSegment.from_file(path, format=file_type)
+    print("play_audio")
+    audio = AudioSegment.from_file("sound_driver\\sound_driver\\soundbyte.wav", format=file_type)
+    play(audio)
+    return
+
 async def run_command(command):
     run(command, hide=True, warn=True)
     return
@@ -36,16 +43,16 @@ async def callback(message: aio_pika.abc.AbstractIncomingMessage):
         if instructions[0] == "speak":
             if config.speechSynthesizer == "piper":
                 if os.name == "nt":
-                    command = "echo " + instructions[1] + " | piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
+                    command = "echo " + instructions[1] + " | sound_driver\\sound_driver\\piper -m sound_driver\\sound_driver\\nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f sound_driver\\sound_driver\\soundbyte.wav"
                 else:
-                    command = "echo " + instructions[1] + " | ./piper -m nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f soundbyte.wav"
+                    command = "echo " + instructions[1] + " | ./sound_driver/sound_driver/piper -m ./sound_driver/sound_driver/pipernl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f ./sound_driver/sound_driver/pipersoundbyte.wav"
                 await run_command(command)
-                audio = AudioSegment.from_file("sound_driver/sound_driver/soundbyte.wav", format="wav")
-                duration = librosa.get_duration(path="soundbyte.wav")
+                path = "sound_driver/sound_driver/soundbyte.wav"
+                duration = librosa.get_duration(path=path)
                 durationMs = round(duration * 10)
                 reply = "talk:" + str(durationMs)
                 await publish(reply, "hub")
-                play(audio)
+                await play_audio(path, "wav")
 
 async def main():
     """
