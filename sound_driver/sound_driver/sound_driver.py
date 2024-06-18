@@ -8,8 +8,10 @@ from pydub.playback import play
 from invoke import run
 import sound_driver.sound_driver.config as config
 import librosa
+import asyncio
+import aio_pika
 
-def main():
+async def main():
     """
     Class used to control the sound output. Requires the hardware to be connected in any way to a speaker or similiar device.
     
@@ -23,11 +25,25 @@ def main():
         checks device type to appropriately call piper through command line using invoke package
         sends a message back to message_hub with the duration of the to-be-spoken text, so the servo_driver can act accordingly.
     """
+    connection = await aio_pika.connect_robust("localhost")    
+
+    async with connection:
+        channel = await connection.channel()
+        await channel.set_qos(prefetch_count=10)
+        audio_queue = await channel.declare_queue("audio_output", auto_delete=True)
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
-    channel = connection.channel()
-    channel.queue_declare(queue="audio_output")
-    channel.queue_declare(queue="hub")
+    async with queue.iterator() as queue_iter:
+        async for message in queue_iter:
+            async with message.process():
+                print("Message received! " + message.body)
+                instructions = message.body.split(":")
+                if queue.name in message.body.decode():
+                    break
+    
+    # connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
+    # channel = connection.channel()
+    # channel.queue_declare(queue="audio_output")
+    # channel.queue_declare(queue="hub")
     
     def callback(ch, method, properties, body):
         print("Message received! " + body.decode())
@@ -54,7 +70,7 @@ def main():
     
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("Interrupted")
         try:

@@ -1,8 +1,9 @@
 import pika
 import os
 import sys
+import asyncio
 
-def main():
+async def main():
     """
     Message hub receives messages from different parts of the application, then forwards those messages to appropriate parts.
     """
@@ -37,7 +38,7 @@ def main():
     
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("Interrupted")
         try:

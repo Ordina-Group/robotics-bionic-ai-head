@@ -28,6 +28,8 @@ pip3 install fabric
 pip3 install librosa
 pip3 install pydub
 pip3 install vosk
+pip3 install aio_pika
+pip3 install asyncio
 
 cd ~/Desktop/
 mkdir piper

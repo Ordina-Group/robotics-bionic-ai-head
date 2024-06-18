@@ -8,12 +8,15 @@ from speech_driver.speech_driver.jokes import jokes as jokes
 from pydub import AudioSegment
 from vosk import Model, KaldiRecognizer
 import os
+import sys
 import signal
 import pika
 import random
 import librosa
+import asyncio
+import aio_pika
 
-def findIntent(text):
+async def findIntent(text):
     """
     This method finds the intent of the user depending on what they said. This method only gets called if speech_config.speechRecognizer != witAI.
     """
@@ -55,7 +58,7 @@ def findIntent(text):
     if speech_config.speechRecognizer == "witAI":
         raise Exception("findIntent() should not get called when using witAI")
 
-def cleanWakeUp(query):
+async def cleanWakeUp(query):
     """This method cleans up a WakeUp query. It should only be used if speech_config.wakeWordDetector == custom. This method exists because VOSK, which is used for the custom wakeWordDetection, is prone to misunderstanding words."""
     
     if speech_config.wakeWordDetector != "custom":
@@ -72,7 +75,7 @@ def cleanWakeUp(query):
         fixedText = " ".join(str(word) for word in textList)
         return fixedText
 
-def cleanText(query):
+async def cleanText(query):
     """This method gets called to clean up the recognized text. It exists because certain words like Ordina or Sopra Steria don't exist in many dictionaries."""
     
     textList = query.split()
@@ -84,7 +87,7 @@ def cleanText(query):
     fixedText = " ".join(str(word) for word in textList)
     return fixedText
     
-def recognizeSpeech(audio):
+async def recognizeSpeech(audio):
     """This method recognizes user input with speech depending on speech_config.speechRecognizer, which defaults to whisper."""
     
     if speech_config.speechRecognizer == "whisper":
@@ -100,7 +103,7 @@ def recognizeSpeech(audio):
     elif speech_config.speechRecognizer == "vosk":
         raise Exception("Not implemented yet")
 
-def respond(intent, topic, text):
+async def respond(intent, topic, text):
     """This method generates a response, depending on speech_config.responseGenerator, which defaults to custom. Most of the alternatives have not been implemented yet."""
     
     if speech_config.responseGenerator == "custom":
@@ -146,7 +149,7 @@ def initialise():
         return
         
 
-def act():
+async def act():
     """This method makes the head act. It is the loop that will be used the most."""
     
     with sr.Microphone() as source:
@@ -158,8 +161,8 @@ def act():
             if duration > 1:
                 print("Done recording")
                 channel.basic_publish(exchange="", routing_key="hub", body="move:sus")
-                recognition = recognizeSpeech(audio)
-                query = cleanText(recognition)
+                recognition = await recognizeSpeech(audio)
+                query = await cleanText(recognition)
                 print(query)
                 foundIntent = findIntent(query)
                 intent = foundIntent["intent"]
@@ -181,7 +184,7 @@ def act():
                         print("Ik heb je niet goed verstaan. Probeer het nog eens.")
             
 
-def wakeUp(recognizer):
+async def wakeUp(recognizer):
     """This method starts a while True loop that is constantly checking to see if the robot should wake up or not.
     It uses VOSK to detect speech input and is only used if speech_config.wakeWordDetector == custom."""
     
@@ -192,13 +195,13 @@ def wakeUp(recognizer):
         data = stream.read(4096, exception_on_overflow = False)
         if recognizer.AcceptWaveform(data):
             text = recognizer.Result()
-            cleanQuery = cleanWakeUp(text[14:-3])
+            cleanQuery = await cleanWakeUp(text[14:-3])
             print(cleanQuery)
             for wakeUpWord in speech_config.wakeWords:
                 if wakeUpWord in cleanQuery:
                     return True
 
-def actLoop(timeOutLimit = 4):
+async def actLoop(timeOutLimit = 4):
     """This method starts a loop where the robothead does things."""
     
     while True:
@@ -206,7 +209,7 @@ def actLoop(timeOutLimit = 4):
         timeOut = 0
         while acted == False and timeOut < timeOutLimit:
             channel.basic_publish(exchange="", routing_key="hub", body="move:rest")
-            acted = act()
+            acted = await act()
             if acted == False:
                 timeOut += 1
                 if timeOut == timeOutLimit:
@@ -218,7 +221,7 @@ def actLoop(timeOutLimit = 4):
         return
 
 
-def main():
+async def main():
     """
     Class to control the microphone connected to the hardware.
     Listens to what the user says, then acts accordingly.
@@ -257,8 +260,8 @@ def main():
             print("Ready to go")
             awake = False
             while True:
-                wakeUp(recognizer)
-                actLoop()
+                await wakeUp(recognizer)
+                await actLoop()
                 channel.basic_publish(exchange="", routing_key="hub", body="move:sleep")
     elif speech_config.wakeWordDetector == "snowboy":
         while True:
@@ -287,9 +290,10 @@ channel = connection.channel()
 channel.queue_declare(queue="servo")
 channel.queue_declare(queue="hub")
 
+
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("Interrupted")
         try:

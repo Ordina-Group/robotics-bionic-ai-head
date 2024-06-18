@@ -7,10 +7,10 @@ from adafruit_servokit import ServoKit
 import servo_driver.servo_driver.movement_data
 from dataclasses import dataclass, fields, asdict
 import time
-# import asyncio
-# import aio_pika
+import asyncio
+import aio_pika
 
-def main():
+async def main():
     """
     Class to control the servomotors. 
     
@@ -217,7 +217,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("Interrupted")
         try:
