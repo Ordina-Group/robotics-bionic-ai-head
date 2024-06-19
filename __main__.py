@@ -23,8 +23,10 @@ async def hub():
     await message_hub.main()
 
 async def main():
-    #servo_toggle = input("Run with servomotors? (y/n) Only works on microcontrollers, defaults to no.")
-    servo_toggle = "no"
+    if os.name == "nt":
+        servo_toggle = "no"
+    else:
+        servo_toggle = input("Run with servomotors? (y/n) Only works on microcontrollers, defaults to no.")
     if servo_toggle == "y" or servo_toggle == "yes":
         import servo_driver.servo_driver.servo_driver as servo_driver
     while True:

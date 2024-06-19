@@ -10,158 +10,6 @@ import time
 import asyncio
 import aio_pika
 
-channel = None
-
-# Here we define what possible commands can be sent to the driver.
-# If future developers add new methods, make sure to add them to this dictionary.
-commands = {
-    "rest": rest,
-    "close_eyes": close_eyes,
-    "open_eyes": open_eyes,
-    "all90": all90,
-    "nod": nod,
-    "shake": shake,
-    "laugh": laugh,
-    "demo": demo,
-    "sleep": sleep,
-    "blink": blink,
-    "sus": sus
-}
-
-kit = ServoKit(channels=16)
-
-def move(pos):
-    for field, value in asdict(pos).items():
-        if value is not None:
-            servoDetails = findPinNumber(field)
-            if not value < servoDetails[1] and not value > servoDetails[2]:
-                kit.servo[servoDetails[0]].angle = value
-
-def rest():
-    move(movement_data.rest)
-
-def close_eyes():
-    move(movement_data.closeEyes)
-
-def open_eyes():
-    move(movement_data.openEyes)
-
-def all90():
-    move(movement_data.all90)
-
-def sleep():
-    move(movement_data.sleep)
-
-def sus():
-    move(movement_data.sus)
-
-def speak(duration):
-    i = 0
-    options = [movement_data.mouthDefault, movement_data.mouthOpen1, movement_data.mouthOpen2, movement_data.mouthOpen3]
-    rest()
-    while i < int(duration):
-        if i % 8 == 0: 
-            close_eyes()
-            time.sleep(0.1)
-            move(choice(options))
-            time.sleep(0.1)
-            open_eyes()
-            time.sleep(0.1)
-            i += 3
-        else:
-            move(choice(options))
-            time.sleep(0.1)
-            i += 1
-    move(movement_data.mouthShut)
-
-
-def nod():
-    close_eyes()
-    i = 0
-    while i < 5:
-        move(movement_data.noddingYes1)
-        time.sleep(0.4)
-        move(movement_data.noddingYes2)
-        time.sleep(0.4)
-        i += 1
-    open_eyes()
-
-def shake():
-    close_eyes()
-    i = 0
-    while i < 5:
-        move(movement_data.shakingNo1)
-        time.sleep(0.4)
-        move(movement_data.shakingNo2)
-        time.sleep(0.4)
-        i += 1
-    open_eyes()
-
-def blink():
-    close_eyes()
-    time.sleep(0.25)
-    open_eyes()
-
-def laugh():
-    rest()
-    time.sleep(0.1)
-    move(movement_data.laughingEyeRoll)
-    time.sleep(0.2)
-    close_eyes()
-    i = 0
-    while i < 11:
-        move(movement_data.laughingPosition1)
-        time.sleep(0.2)
-        move(movement_data.laughingPosition2)
-        time.sleep(0.2)
-        i += 1
-    rest()
-
-def manualWithName(servoName, angle):
-    servo_number = findPinNumber(servoName)
-    kit.servo[servo_number].angle = angle
-
-def manualWithNumber(servo_number, angle):
-    kit.servo[servo_number].angle = angle
-
-def configure(servo_number):
-    i = 0
-    while i < 2:
-        kit.servo[servo_number].angle = 80
-        time.sleep(0.5)
-        kit.servo[servo_number].angle = 110
-        time.sleep(0.5)
-        i += 1
-    kit.servo[servo_number].angle = 90
-
-    
-def findPinNumber(servoMotorName):
-    servoMotors = [servo_config.eyeLeft, servo_config.eyeRight, servo_config.eyeLeftOpen, servo_config.eyeRightOpen, servo_config.eyesUpDown, servo_config.mouth, servo_config.headTilt, servo_config.headSwivel, servo_config.headPivot]
-    for servoMotor in servoMotors:
-        if servoMotorName == servoMotor.name:
-            return servoMotor.pinNr, servoMotor.minRotation, servoMotor.maxRotation
-
-
-async def callback(message: aio_pika.abc.AbstractIncomingMessage):
-    async with message.process(ignore_processed=True):
-        await message.ack()
-        print("Servo: Message received: " + message.body.decode())
-        instructions = message.body.decode().split(":")
-        if instructions[0] == "speak":
-            speak(instructions[1])
-        elif instructions[0] == "blink":
-            blink()
-        elif instructions[0] in commands:
-            commands[instructions[0]]()
-        elif instructions[0] == "manualWithName":
-            manualWithName(instructions[1], int(instructions[2]))
-        elif instructions[0] == "manualWithNumber":
-            manualWithNumber(int(instructions[1]), int(instructions[2]))
-        elif instructions[0] == "config":
-            configure(int(instructions[1]))
-        else:
-            print("Unknown command: %s" % (instructions[0]))
-
 
 async def main():
     """
@@ -217,19 +65,188 @@ async def main():
     connection = await aio_pika.connect_robust("amqp://guest:guest@localhost")    
 
     async with connection:
-        global channel 
         channel = await connection.channel()
         await channel.set_qos(prefetch_count=10)
         servo_queue = await channel.declare_queue("servo", auto_delete=False)
-    
-        await servo_queue.consume(callback)
-        try:
-            await asyncio.Future()
-        finally:
-            await connection.close()
-   
-   
+        
+        should_blink = False
+        
+        # Here we define what possible commands can be sent to the driver.
+        # If future developers add new methods, make sure to add them to this dictionary.
+        commands = {
+            "rest": rest,
+            "close_eyes": close_eyes,
+            "open_eyes": open_eyes,
+            "all90": all90,
+            "nod": nod,
+            "shake": shake,
+            "laugh": laugh,
+            "demo": demo,
+            "sleep": sleep,
+            "blink": blink,
+            "sus": sus
+        }
 
+        kit = ServoKit(channels=16)
+        
+        def move_sync(pin, angle):
+            kit.servo[pin].angle = angle
+        
+        async def move(pos):
+            for field, value in asdict(pos).items():
+                if value is not None:
+                    servoDetails = findPinNumber(field)
+                    if not value < servoDetails[1] and not value > servoDetails[2]:
+                        pin = servoDetails[0]
+                        angle = value
+                        await asyncio.to_thread(move_sync, pin, angle)
+                        
+        
+        async def rest():
+            should_blink = True
+            await move(movement_data.rest)
+        
+        async def close_eyes():
+            should_blink = False
+            await move(movement_data.closeEyes)
+
+        async def open_eyes():
+            should_blink = False
+            await move(movement_data.openEyes)
+
+        async def all90():
+            should_blink = False
+            await move(movement_data.all90)
+
+        async def sleep():
+            should_blink = False
+            await move(movement_data.sleep)
+
+        async def sus():
+            should_blink = False
+            await move(movement_data.sus)
+            should_blink = True
+
+        async def speak(duration):
+            should_blink = True
+            i = 0
+            options = [movement_data.mouthDefault, movement_data.mouthOpen1, movement_data.mouthOpen2, movement_data.mouthOpen3]
+            await rest()
+            while i < int(duration):
+                await move(choice(options))
+                await asyncio.sleep(0.1)
+                i += 1
+            await move(movement_data.mouthShut)
+            should_blink = False
+
+
+        async def nod():
+            await close_eyes()
+            i = 0
+            while i < 5:
+                await move(movement_data.noddingYes1)
+                await asyncio.sleep(0.4)
+                await move(movement_data.noddingYes2)
+                await asyncio.sleep(0.4)
+                i += 1
+            await open_eyes()
+            should_blink = True
+
+        async def shake():
+            should_blink = False
+            await close_eyes()
+            i = 0
+            while i < 5:
+                await move(movement_data.shakingNo1)
+                await asyncio.sleep(0.4)
+                await move(movement_data.shakingNo2)
+                await asyncio.sleep(0.4)
+                i += 1
+            await open_eyes()
+            should_blink = True
+
+        async def blink():
+            await close_eyes()
+            await asyncio.sleep(0.25)
+            await open_eyes()
+
+        async def laugh():
+            await rest()
+            should_blink = False
+            await asyncio.sleep(0.1)
+            await move(movement_data.laughingEyeRoll)
+            await asyncio.sleep(0.2)
+            await close_eyes()
+            i = 0
+            while i < 11:
+                await move(movement_data.laughingPosition1)
+                await asyncio.sleep(0.2)
+                await move(movement_data.laughingPosition2)
+                await asyncio.sleep(0.2)
+                i += 1
+            await rest()
+
+        async def manualWithName(servoName, angle):
+            servo_number = findPinNumber(servoName)
+            await asyncio.to_thread(move_sync, servo_number, angle)
+
+        async def manualWithNumber(servo_number, angle):
+            await asyncio.to_thread(move_sync, servo_number, angle)
+
+        async def configure(servo_number):
+            i = 0
+            while i < 2:
+                kit.servo[servo_number].angle = 80
+                await asyncio.sleep(0.5)
+                kit.servo[servo_number].angle = 110
+                await asyncio.sleep(0.5)
+                i += 1
+            kit.servo[servo_number].angle = 90
+
+            
+        def findPinNumber(servoMotorName):
+            servoMotors = [servo_config.eyeLeft, servo_config.eyeRight, servo_config.eyeLeftOpen, servo_config.eyeRightOpen, servo_config.eyesUpDown, servo_config.mouth, servo_config.headTilt, servo_config.headSwivel, servo_config.headPivot]
+            for servoMotor in servoMotors:
+                if servoMotorName == servoMotor.name:
+                    return servoMotor.pinNr, servoMotor.minRotation, servoMotor.maxRotation
+        
+        async def callback(message: aio_pika.abc.AbstractIncomingMessage):
+            async with message.process(ignore_processed=True):
+                await message.ack()
+                print("Servo: Message received: " + message.body.decode())
+                instructions = message.body.decode().split(":")
+                if instructions[0] == "speak":
+                    await speak(instructions[1])
+                elif instructions[0] == "blink":
+                    await blink()
+                elif instructions[0] in commands:
+                    await commands[instructions[0]]()
+                elif instructions[0] == "manualWithName":
+                    await manualWithName(instructions[1], int(instructions[2]))
+                elif instructions[0] == "manualWithNumber":
+                    await manualWithNumber(int(instructions[1]), int(instructions[2]))
+                elif instructions[0] == "config":
+                    await configure(int(instructions[1]))
+                else:
+                    print("Unknown command: %s" % (instructions[0]))
+                
+        
+        async def autoblink():
+            while True:
+                await asyncio.sleep(4)
+                if should_blink == True:
+                    await blink()
+        
+        async def consume_queue():
+            await servo_queue.consume(callback)
+            try:
+                await asyncio.Future()
+            finally:
+                await connection.close() 
+        
+        await asyncio.gather(autoblink(), consume_queue())
+
+   
 
 if __name__ == "__main__":
     try:
