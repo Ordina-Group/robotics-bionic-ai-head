@@ -4,7 +4,7 @@ import sys
 import servo_driver.servo_driver.servo_config as servo_config
 from random import choice
 from adafruit_servokit import ServoKit
-import servo_driver.servo_driver.movement_data
+import servo_driver.servo_driver.movement_data as movement_data
 from dataclasses import dataclass, fields, asdict
 import time
 import asyncio
@@ -71,22 +71,6 @@ async def main():
         
         should_blink = False
         
-        # Here we define what possible commands can be sent to the driver.
-        # If future developers add new methods, make sure to add them to this dictionary.
-        commands = {
-            "rest": rest,
-            "close_eyes": close_eyes,
-            "open_eyes": open_eyes,
-            "all90": all90,
-            "nod": nod,
-            "shake": shake,
-            "laugh": laugh,
-            "demo": demo,
-            "sleep": sleep,
-            "blink": blink,
-            "sus": sus
-        }
-
         kit = ServoKit(channels=16)
         
         def move_sync(pin, angle):
@@ -210,25 +194,48 @@ async def main():
                 if servoMotorName == servoMotor.name:
                     return servoMotor.pinNr, servoMotor.minRotation, servoMotor.maxRotation
         
+        async def takeAction(instructions)
+            command = instructions[0]
+            if command == "speak":
+                await speak(instructions[1])
+            elif command == "blink":
+                await blink()
+            elif command == "rest":
+                await rest()
+            elif command == "close_eyes":
+                await close_eyes()
+            elif command == "open_eyes":
+                await open_eyes()
+            elif command == "all90":
+                await all90()
+            elif command == "nod":
+                await nod()
+            elif command == "shake":
+                await shake()
+            elif command == "laugh":
+                await laugh()
+            elif command == "sleep":
+                await sleep()
+            elif command == "sus":
+                await sus()
+            elif command == "manualWithName":
+                await manualWithName(instructions[1], int(instructions[2]))
+            elif command == "manualWithNumber":
+                await manualWithNumber(int(instructions[1]), int(instructions[2]))
+            elif command == "config":
+                await configure(int(instructions[1]))
+            else:
+                print("Unknown command: %s" % (instructions[0]))
+            return
+        
+        
         async def callback(message: aio_pika.abc.AbstractIncomingMessage):
             async with message.process(ignore_processed=True):
                 await message.ack()
                 print("Servo: Message received: " + message.body.decode())
                 instructions = message.body.decode().split(":")
-                if instructions[0] == "speak":
-                    await speak(instructions[1])
-                elif instructions[0] == "blink":
-                    await blink()
-                elif instructions[0] in commands:
-                    await commands[instructions[0]]()
-                elif instructions[0] == "manualWithName":
-                    await manualWithName(instructions[1], int(instructions[2]))
-                elif instructions[0] == "manualWithNumber":
-                    await manualWithNumber(int(instructions[1]), int(instructions[2]))
-                elif instructions[0] == "config":
-                    await configure(int(instructions[1]))
-                else:
-                    print("Unknown command: %s" % (instructions[0]))
+                await takeAction(instructions)
+                
                 
         
         async def autoblink():

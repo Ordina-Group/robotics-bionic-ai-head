@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-import servo_config as conf
+import servo_driver.servo_driver.servo_config as conf
 
 
 @dataclass

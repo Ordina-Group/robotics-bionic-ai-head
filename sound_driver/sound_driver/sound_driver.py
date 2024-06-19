@@ -34,9 +34,15 @@ async def main():
         await channel.set_qos(prefetch_count=10)
         audio_queue = await channel.declare_queue("audio_output", auto_delete=False)
     
-        async def play_audio(path, file_type):
-            audio = AudioSegment.from_file("sound_driver\\sound_driver\\soundbyte.wav", format="wav")
+        def play_audio_sync(audio):
             play(audio)
+        
+        async def play_audio(path, file_type):
+            if os.name == "nt":
+                audio = AudioSegment.from_file("sound_driver\\sound_driver\\soundbyte.wav", format="wav")
+            else:
+                audio = AudioSegment.from_file("./sound_driver/sound_driver/soundbyte.wav", format="wav")
+            await asyncio.to_thread(play, audio)
             return
 
         async def run_command(command):
@@ -65,7 +71,7 @@ async def main():
                         if os.name == "nt":
                             command = "echo " + instructions[1] + " | sound_driver\\sound_driver\\piper -m sound_driver\\sound_driver\\nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f sound_driver\\sound_driver\\soundbyte.wav"
                         else:
-                            command = "echo " + instructions[1] + " | ./sound_driver/sound_driver/piper -m ./sound_driver/sound_driver/pipernl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f ./sound_driver/sound_driver/pipersoundbyte.wav"
+                            command = "echo " + instructions[1] + " | ./sound_driver/sound_driver/piper -m ./sound_driver/sound_driver/nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f ./sound_driver/sound_driver/soundbyte.wav"
                         await run_command(command)
                         path = "sound_driver/sound_driver/soundbyte.wav"
                         duration = librosa.get_duration(path=path)
