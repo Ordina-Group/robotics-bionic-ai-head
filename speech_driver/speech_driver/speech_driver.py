@@ -15,6 +15,7 @@ import random
 import librosa
 import asyncio
 import aio_pika
+from invoke import run
 
 async def main():
     """
@@ -71,7 +72,8 @@ async def main():
             """
             This method finds the intent of the user depending on what they said. This method only gets called if speech_config.speechRecognizer != witAI.
             """
-            
+            if speech_config.responseGenerator != "custom":
+                return {"intent": "response", "responseWanted": True, "topic": None}
             if speech_config.speechRecognizer != "witAI":
                 for tw in speech_config.jobTriggerWords:
                     if tw in text:
@@ -161,7 +163,10 @@ async def main():
                 return response
             elif speech_config.speechRecognizer == "vosk":
                 raise Exception("Not implemented yet")
-
+        
+        def run_command_sync(command):
+            run(command, hide=True, warn=True)
+        
         async def respond(intent, topic, text):
             """This method generates a response, depending on speech_config.responseGenerator, which defaults to custom. Most of the alternatives have not been implemented yet."""
             if speech_config.responseGenerator == "custom":
@@ -188,7 +193,7 @@ async def main():
                     command = "echo " + text + " | ollama run llama3 > output.txt"
                 elif speech_config.responseGenerator == "geitje":
                     command = "echo " + text + " | ollama run bramvanroy/geitje-7b-ultra-gguf > output.txt"
-                run(command, hide=True, warn=True)
+                await asyncio.to_thread(run_command_sync, command)
                 file = file = open("output.txt", "r")
                 text = file.read()
                 file.close()
@@ -212,7 +217,7 @@ async def main():
                     duration = librosa.get_duration(path="microphone-results.wav")
                     if duration > 1:
                         print("Done recording")
-                        await publish("move:sus", "hub")
+                        await publish("move:::sus", "hub")
                         recognition = await recognizeSpeech(audio)
                         query = cleanText(recognition)
                         print(query)
@@ -222,7 +227,7 @@ async def main():
                         topic = foundIntent["topic"]
                         if shouldReply == True:
                             response = await respond(intent, topic, query)
-                            reply = "speak:" + response
+                            reply = "speak:::" + response
                             await publish(reply, "hub")
                             if topic != "unknown":
                                 return True
@@ -230,11 +235,11 @@ async def main():
                                 return False
                         else:
                             if intent == "sleep" or intent == "nod" or intent == "shake" or intent == "laugh":
-                                reply = "move:" + intent
+                                reply = "move:::" + intent
                                 await publish(reply, "hub")
                                 return True
                             else:
-                                await publish("move:rest", "hub")
+                                await publish("move:::rest", "hub")
                                 print("Ik heb je niet goed verstaan. Probeer het nog eens.")
                     
 
@@ -265,13 +270,13 @@ async def main():
                 acted = False
                 timeOut = 0
                 while acted == False and timeOut < timeOutLimit:
-                    await publish("move:rest", "hub")
+                    await publish("move:::rest", "hub")
                     acted = await act()
                     if acted == False:
                         timeOut += 1
                         if timeOut == timeOutLimit:
                             print("Ik ben per ongeluk wakker geworden geloof ik. Ik ga weer slapen.")
-                            await publish("move:sleep", "hub")
+                            await publish("move:::sleep", "hub")
                             return
                     else:
                         return
@@ -296,7 +301,7 @@ async def main():
                 os.system("cls" if os.name == "nt" else "clear")
                 print("Ready to go")
                 awake = False
-                await publish("move:sleep", "hub")
+                await publish("move:::sleep", "hub")
                 while True:
                     await wakeUp(recognizer)
                     await actLoop()

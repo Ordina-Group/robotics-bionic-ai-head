@@ -23,17 +23,17 @@ async def main():
             async with message.process(ignore_processed=True):
                 await message.ack()
                 print("Hub: Message received: " + message.body.decode())
-                instructions = message.body.decode().split(":")
+                instructions = message.body.decode().split(":::")
                 if len(instructions) != 2:
                     raise Exception("Invalid instructions sent to hub - instructions formatted wrong.")
                 if instructions[0] == "speak":
-                    reply = "speak:" + instructions[1]
+                    reply = "speak:::" + instructions[1]
                     await publish(reply, "audio_output")
                 elif instructions[0] == "move":
                     reply = instructions[1]
                     await publish(reply, "servo")
                 elif instructions[0] == "talk":
-                    reply = "speak:" + instructions[1]
+                    reply = "speak:::" + instructions[1]
                     await publish(reply, "servo")
                 else:
                     raise Exception("Invalid instructions sent to hub.")

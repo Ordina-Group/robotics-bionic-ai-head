@@ -233,7 +233,7 @@ async def main():
             async with message.process(ignore_processed=True):
                 await message.ack()
                 print("Servo: Message received: " + message.body.decode())
-                instructions = message.body.decode().split(":")
+                instructions = message.body.decode().split(":::")
                 await takeAction(instructions)
                 
                 

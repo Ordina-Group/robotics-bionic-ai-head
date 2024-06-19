@@ -22,7 +22,7 @@ async def main():
     --------
     callback(ch, method, properties, body):
         default RabbitMQ callback method used for communication.
-        expects body to be formatted as 'speak:{text}'
+        expects body to be formatted as 'speak:::{text}'
         checks device type to appropriately call piper through command line using invoke package
         sends a message back to message_hub with the duration of the to-be-spoken text, so the servo_driver can act accordingly.
     """
@@ -63,20 +63,24 @@ async def main():
             async with message.process(ignore_processed=True):
                 await message.ack()
                 print("Audio: Message received: " + message.body.decode())
-                instructions = message.body.decode().split(":")
+                instructions = message.body.decode().split(":::")
                 if len(instructions) != 2:
                     raise Exception("Invalid instructions sent to audio driver - instructions formatted wrong.")
                 if instructions[0] == "speak":
                     if config.speechSynthesizer == "piper":
+                        stripped_instructions = instructions[1].strip()
+                        split_instructions = stripped_instructions.split()
+                        joined_instructions = " ".join(split_instructions)
+                        clean_instructions = joined_instructions.replace(".", "").replace("?", "").replace("!", "")
                         if os.name == "nt":
-                            command = "echo " + instructions[1] + " | sound_driver\\sound_driver\\piper -m sound_driver\\sound_driver\\nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f sound_driver\\sound_driver\\soundbyte.wav"
+                            command = "echo " + clean_instructions + " | sound_driver\\sound_driver\\piper -m sound_driver\\sound_driver\\nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f sound_driver\\sound_driver\\soundbyte.wav"
                         else:
-                            command = "echo " + instructions[1] + " | ./sound_driver/sound_driver/piper -m ./sound_driver/sound_driver/nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f ./sound_driver/sound_driver/soundbyte.wav"
+                            command = "echo " + clean_instructions + " | ./sound_driver/sound_driver/piper -m ./sound_driver/sound_driver/nl_NL-mls-medium.onnx -s " + str(config.piperVoice) + " -f ./sound_driver/sound_driver/soundbyte.wav"
                         await run_command(command)
                         path = "sound_driver/sound_driver/soundbyte.wav"
                         duration = librosa.get_duration(path=path)
                         durationMs = round(duration * 10)
-                        reply = "talk:" + str(durationMs)
+                        reply = "talk:::" + str(durationMs)
                         await publish(reply, "hub")
                         await play_audio(path, "wav")
     
