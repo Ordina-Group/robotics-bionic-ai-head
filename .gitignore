@@ -186,6 +186,7 @@ speech_driver/speech_driver/witkey.txt
 speech_driver/speech_driver/witkey.txt
 speech_driver/speech_driver/witkey.txt
 microphone-results.wav
+witkey.txt
 sound_driver/sound_driver/nl_NL-mls-medium.onnx
 sound_driver/sound_driver/__pycache__/sound_driver.cpython-312.pyc
 sound_driver/sound_driver/espeak-ng-data/af_dict
