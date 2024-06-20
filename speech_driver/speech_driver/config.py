@@ -23,7 +23,7 @@ wakeWordDetectors = ["custom", "snowboy", "porcupine", "raven", "precise"]
 wakeWordDetector = wakeWordDetectors[0]
 
 # Speech recognition
-recognizers = ["whisper", "whisperOnline", "witSR", "vosk", "witAI"]
+recognizers = ["whisper", "witAI", "whisperOnline", "witSR", "vosk"]
 speechRecognizer = recognizers[0]
 voskModels = ["option1", "option2"]
 voskModel = voskModels[0]

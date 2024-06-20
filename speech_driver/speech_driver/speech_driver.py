@@ -17,6 +17,11 @@ import asyncio
 import aio_pika
 from invoke import run
 
+client = None
+awake = False
+is_paused = False
+r = None
+
 async def main():
     """
     Class to control the microphone connected to the hardware.
@@ -49,12 +54,22 @@ async def main():
     async with connection:
         channel = await connection.channel()
         await channel.set_qos(prefetch_count=10)
+        audio_input_queue = await channel.declare_queue("audio_input", auto_delete=False)
         global client
+        global awake
+        awake = False
+        global is_paused
+        is_paused = False
         
         async def initialise():
+            global client
             """This method initialises witAI or whisperOnline if necessary."""
             if speech_config.speechRecognizer == "witAI":
+                witKeyFile = open("witkey.txt", "r")
+                witKey = witKeyFile.readline().rstrip()
+                witKeyFile.close()   
                 from wit import Wit
+                client = Wit(witKey)
                 return Wit(witKey)
             elif speech_config.speechRecognizer == "whisperOnline":
                 from openai import OpenAI 
@@ -89,8 +104,8 @@ async def main():
                                 if len(afterOver) > 1:
                                     if topicTw in afterOver[1]:
                                         return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
-                                    elif topicTw in text:
-                                        return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
+                                if topicTw in text:
+                                    return {"intent": "inform", "responseWanted": True, "topic":topic["topic"]}
                         return {"intent": "inform", "responseWanted": True, "topic": "unknown"}
                 for tw in speech_config.jokeTriggerWords:
                     if tw in text:
@@ -143,6 +158,14 @@ async def main():
         def recogn_whisper(audio, model, language, initial_prompt):
             return r.recognize_whisper(audio, model=model, language=language, initial_prompt=initial_prompt).lower()
         
+        def first_value(obj, key):
+            if key not in obj:
+                return None
+            val = obj[key][0]["value"]
+            if not val:
+                return None
+            return val
+        
         async def recognizeSpeech(audio):
             """This method recognizes user input with speech depending on speech_config.speechRecognizer, which defaults to whisper."""
             
@@ -159,8 +182,26 @@ async def main():
                 transcription = r.audio.transcriptions.create(model="whisper-1", file=audio)
                 return transcription.text
             elif speech_config.speechRecognizer == "witAI":
-                response = client.speech(f, {"Content-Type": "audio/wav"})
-                return response
+                with open("microphone-results.wav", "rb") as recording: 
+                    ### TODO!!
+                    intent = None
+                    topic = None
+                    responseWanted = True
+                    response = client.speech(recording, {"Content-Type": "audio/wav"})
+                    print(response)
+                    entities = response["entities"]
+                    ### DIT WERKT NOG NIET!!
+                    if entities[0]["name"] == "informationEntity:informationEntity":
+                        intent = "inform"
+                    possible_topic = first_value(entities, "informationEntity:informationEntity")
+                    topic = None
+                    if possible_topic:
+                        topic = possible_topic
+                    print(entity)
+                    topic = None
+                    #if possible_topic:
+                        #topic = possible_topic
+                    return {"intent": intent, "responseWanted": True, "topic": None}
             elif speech_config.speechRecognizer == "vosk":
                 raise Exception("Not implemented yet")
         
@@ -203,7 +244,7 @@ async def main():
         def listen(source, max_duration, min_duration):
             audio = r.listen(source, max_duration, min_duration)
             with open("microphone-results.wav", "wb") as recording:
-                        recording.write(audio.get_wav_data())
+                recording.write(audio.get_wav_data())
             return audio
             
         async def act():
@@ -244,15 +285,21 @@ async def main():
                     
 
         def wakeUp_sync(stream, recognizer):
+            global awake
+            global is_paused
             while True:
-                data = stream.read(4096, exception_on_overflow = False)
-                if recognizer.AcceptWaveform(data):
-                    text = recognizer.Result()
-                    cleanQuery = cleanWakeUp(text[14:-3])
-                    print(cleanQuery)
-                    for wakeUpWord in speech_config.wakeWords:
-                        if wakeUpWord in cleanQuery:
-                            return
+                if awake == False and is_paused == False:
+                    data = stream.read(4096, exception_on_overflow = False)
+                    if recognizer.AcceptWaveform(data):
+                        text = recognizer.Result()
+                        cleanQuery = cleanWakeUp(text[14:-3])
+                        print(cleanQuery)
+                        for wakeUpWord in speech_config.wakeWords:
+                            if wakeUpWord in cleanQuery:
+                                awake = True
+                                return
+                if awake == True:
+                    return
 
         async def wakeUp(recognizer):
             """This method starts a while True loop that is constantly checking to see if the robot should wake up or not.
@@ -266,6 +313,7 @@ async def main():
             
         async def actLoop(timeOutLimit = 4):
             """This method starts a loop where the robothead does things."""
+            global awake
             while True:
                 acted = False
                 timeOut = 0
@@ -277,20 +325,48 @@ async def main():
                         if timeOut == timeOutLimit:
                             print("Ik ben per ongeluk wakker geworden geloof ik. Ik ga weer slapen.")
                             await publish("move:::sleep", "hub")
+                            awake = False
                             return
                     else:
+                        awake = False
                         return
+                awake = False
                 return
         
+        async def callback(message: aio_pika.abc.AbstractIncomingMessage):
+            async with message.process(ignore_processed=True):
+                global awake
+                await message.ack()
+                print("Speech: Message received: " + message.body.decode())
+                instructions = message.body.decode().split(":::")
+                if instructions[0] == "pause":
+                    global is_paused
+                    is_paused = True
+                    print("paused")
+                    pause_timer = int(instructions[1]) / 10
+                    await asyncio.sleep(pause_timer)
+                    print("unpaused")
+                    is_paused = False
+                elif instructions[0] == "wakeup":
+                    awake = True
+                elif instructions[0] == "sleep":
+                    awake = False
+        
+        async def consume_queue():
+            await audio_input_queue.consume(callback)
+            try:
+                await asyncio.Future()
+            finally:
+                await connection.close()
         
         client = await initialise()
         global r
-        r = sr.Recognizer()
-        if speech_config.speechRecognizer == "witSR" or speech_config.speechRecognizer == "witAI":
-            witKeyFile = open("witkey.txt", "r")
-            global witKey
-            witKey = witKeyFile.readline().rstrip()
-            witKeyFile.close()       
+        r = sr.Recognizer()             
+        
+        async def main_event_loop(recognizer):
+            while True:
+                await wakeUp(recognizer)
+                await actLoop()
         
         if speech_config.wakeWordDetector == "custom":
             model = Model("speech_driver/vosk/vosk-model-small-nl-0.22")
@@ -302,9 +378,7 @@ async def main():
                 print("Ready to go")
                 awake = False
                 await publish("move:::sleep", "hub")
-                while True:
-                    await wakeUp(recognizer)
-                    await actLoop()
+                await asyncio.gather(main_event_loop(recognizer), consume_queue())
         elif speech_config.wakeWordDetector == "snowboy":
             while True:
                 print("")

@@ -5,7 +5,6 @@ import sys
 import sound_driver.sound_driver.sound_driver as sound_driver
 import speech_driver.speech_driver.speech_driver as speech_driver
 import message_hub.message_hub.message_hub as message_hub
-import servo_driver.servo_driver.servo_driver as servo_driver
 
 async def sound():
     print("Sound driver running.")

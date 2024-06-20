@@ -14,7 +14,7 @@
 # Therefore, instead of ending the sentence (.), use a comma (,) to prolong it. It also tends to get weird around apostrophes ('), so try and avoid those too
 # If struggling with using Piper, the maker of the package is called 'synthmike' on Reddit and was very friendly when I asked him a few questions.
 
-office = {"triggerWords": ["kantoor", "kantoren", "locaties", "kantor"], "topic": "kantoor"}
+office = {"triggerWords": ["kantoor", "kantoren", "locaties", "kantor", "contoor", "contour", "comptor", "comptoor"], "topic": "kantoor"}
 staff = {"triggerWords": ["personeel", "collega's", "collega", "medewerker", "medewerkers"], "topic": "personeel"}
 pay = {"triggerWords": ["salaris", "loon", "uurtarief"], "topic": "salaris"}
 clients = {"triggerWords": ["klanten", "werkgever", "werkgevers", "opdrachtgever", "opdrachtgevers"], "topic": "klanten"}

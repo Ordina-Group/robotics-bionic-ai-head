@@ -50,14 +50,9 @@ async def main():
             return
 
         async def publish(message, routing_key):
-            connection = await aio_pika.connect("amqp://guest:guest@localhost")
-            async with connection:
-                temp_channel = await connection.channel()
-                await temp_channel.set_qos(prefetch_count=10)
-                temp_queue = await temp_channel.declare_queue(routing_key, auto_delete=False)
-                await temp_channel.default_exchange.publish(aio_pika.Message(body=message.encode()), routing_key=routing_key)
-                await connection.close()
-                return
+            print("Audio: Message sent!: " + message)
+            await channel.default_exchange.publish(aio_pika.Message(body=message.encode()), routing_key=routing_key)
+            return
 
         async def callback(message: aio_pika.abc.AbstractIncomingMessage):
             async with message.process(ignore_processed=True):
@@ -82,6 +77,8 @@ async def main():
                         durationMs = round(duration * 10)
                         reply = "talk:::" + str(durationMs)
                         await publish(reply, "hub")
+                        pause_reply = "pause:::" + str(durationMs)
+                        await publish(pause_reply, "hub")
                         await play_audio(path, "wav")
     
         await audio_queue.consume(callback)

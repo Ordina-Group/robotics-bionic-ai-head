@@ -35,6 +35,9 @@ async def main():
                 elif instructions[0] == "talk":
                     reply = "speak:::" + instructions[1]
                     await publish(reply, "servo")
+                elif instructions[0] == "pause":
+                    reply = "pause:::" + str(instructions[1])
+                    await publish(reply, "audio_input")
                 else:
                     raise Exception("Invalid instructions sent to hub.")
         

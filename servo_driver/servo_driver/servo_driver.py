@@ -10,6 +10,7 @@ import time
 import asyncio
 import aio_pika
 
+should_blink = False
 
 async def main():
     """
@@ -68,7 +69,7 @@ async def main():
         channel = await connection.channel()
         await channel.set_qos(prefetch_count=10)
         servo_queue = await channel.declare_queue("servo", auto_delete=False)
-        
+        global should_blink
         should_blink = False
         
         kit = ServoKit(channels=16)
@@ -87,31 +88,38 @@ async def main():
                         
         
         async def rest():
+            global should_blink
             should_blink = True
             await move(movement_data.rest)
         
         async def close_eyes():
+            global should_blink
             should_blink = False
             await move(movement_data.closeEyes)
 
         async def open_eyes():
+            global should_blink
             should_blink = False
             await move(movement_data.openEyes)
 
         async def all90():
+            global should_blink
             should_blink = False
             await move(movement_data.all90)
 
         async def sleep():
+            global should_blink
             should_blink = False
             await move(movement_data.sleep)
 
         async def sus():
+            global should_blink
             should_blink = False
             await move(movement_data.sus)
             should_blink = True
 
         async def speak(duration):
+            global should_blink
             should_blink = True
             i = 0
             options = [movement_data.mouthDefault, movement_data.mouthOpen1, movement_data.mouthOpen2, movement_data.mouthOpen3]
@@ -125,6 +133,8 @@ async def main():
 
 
         async def nod():
+            global should_blink
+            should_blink = False
             await close_eyes()
             i = 0
             while i < 5:
@@ -137,6 +147,7 @@ async def main():
             should_blink = True
 
         async def shake():
+            global should_blink
             should_blink = False
             await close_eyes()
             i = 0
@@ -155,6 +166,7 @@ async def main():
             await open_eyes()
 
         async def laugh():
+            global should_blink
             await rest()
             should_blink = False
             await asyncio.sleep(0.1)
@@ -171,13 +183,18 @@ async def main():
             await rest()
 
         async def manualWithName(servoName, angle):
+            global should_blink
+            should_blink = False
             servo_number = findPinNumber(servoName)
             await asyncio.to_thread(move_sync, servo_number, angle)
 
         async def manualWithNumber(servo_number, angle):
+            global should_blink
             await asyncio.to_thread(move_sync, servo_number, angle)
 
         async def configure(servo_number):
+            global should_blink
+            should_blink = False
             i = 0
             while i < 2:
                 kit.servo[servo_number].angle = 80
@@ -189,12 +206,14 @@ async def main():
 
             
         def findPinNumber(servoMotorName):
+            global should_blink
+            should_blink = False
             servoMotors = [servo_config.eyeLeft, servo_config.eyeRight, servo_config.eyeLeftOpen, servo_config.eyeRightOpen, servo_config.eyesUpDown, servo_config.mouth, servo_config.headTilt, servo_config.headSwivel, servo_config.headPivot]
             for servoMotor in servoMotors:
                 if servoMotorName == servoMotor.name:
                     return servoMotor.pinNr, servoMotor.minRotation, servoMotor.maxRotation
         
-        async def takeAction(instructions)
+        async def takeAction(instructions):
             command = instructions[0]
             if command == "speak":
                 await speak(instructions[1])
@@ -240,6 +259,7 @@ async def main():
         
         async def autoblink():
             while True:
+                global should_blink
                 await asyncio.sleep(4)
                 if should_blink == True:
                     await blink()
