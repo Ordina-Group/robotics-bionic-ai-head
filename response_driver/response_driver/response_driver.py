@@ -132,9 +132,12 @@ async def main():
                 print("Response: Message received: " + message.body.decode())
                 instructions = message.body.decode().split(":::")
                 if instructions[0] == "respond":
-                    intent = await findIntent(instructions[1])
-                    
-                    awake = True
+                    query = await findIntent(instructions[1])
+                    if query["responseWanted"] == True:
+                        response = await respond(query["intent"], query["topic"], 
+                        awake = True
+                    else:
+                        #Doe iets adhv intent
                 elif instructions[0] == "respondWit":
                     details = instructions[1].split("***")
                     intent = details[0]
@@ -143,8 +146,8 @@ async def main():
                     text = details[3]
                     if shouldRespond != "False":
                         response = await respond(intent, topic, text)
-                        reply = "
-                        publish
+                        # reply = "{taak}:::" + response
+                        await publish(reply, "hub")
                     
 
         await response_queue.consume(callback)

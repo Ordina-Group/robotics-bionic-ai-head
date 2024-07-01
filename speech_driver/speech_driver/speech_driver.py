@@ -79,7 +79,6 @@ async def main():
 
         def cleanWakeUp(query):
             """This method cleans up a WakeUp query. It should only be used if speech_config.wakeWordDetector == custom. This method exists because VOSK, which is used for the custom wakeWordDetection, is prone to misunderstanding words."""
-            
             if speech_config.wakeWordDetector != "custom":
                 raise Exception("cleanWakeUp should not be used when using any other WakeWordDetector than the custom one")
             else:
@@ -135,38 +134,38 @@ async def main():
                 transcription = r.audio.transcriptions.create(model="whisper-1", file=audio)
                 return transcription.text
             elif speech_config.speechRecognizer == "witAI":
-                """with open("microphone-results.wav", "rb") as recording: 
-                    ### TODO!!
-                    intent = None
-                    topic = None
-                    responseWanted = True
-                    response = client.speech(recording, {"Content-Type": "audio/wav"})
-                    print(response)
-                    entities = response["entities"]
-                    ### DIT WERKT NOG NIET!!
-                    if entities[0]["name"] == "informationEntity:informationEntity":
-                        intent = "inform"
-                    possible_topic = first_value(entities, "informationEntity:informationEntity")
-                    topic = None
-                    if possible_topic:
-                        topic = possible_topic
-                    print(entity)
-                    topic = None
-                    #if possible_topic:
-                        #topic = possible_topic
-                    return {"intent": intent, "responseWanted": True, "topic": None}
-                    
-                    if responseWanted:
-                        query = "{intent}***{responseWanted}***{topic}***{text}"
-                        print("Intent: " + {intent} + ", should respond: " + {responseWanted} + ", topic: " + {topic} + ", text: " + {text})
-                        return query
-                    else:
-                        query = "{intent}***False***{topic}***{text}"
-                        print("Intent: " + {intent} + ", should respond: False, topic: " + {topic} + ", text: " + {text})
-                        // Doe iets adhv intent
-                        return query
-                    
-                    """
+                """
+                with open("microphone-results.wav", "rb") as recording: 
+                ### TODO!!
+                intent = None
+                topic = None
+                responseWanted = True
+                response = client.speech(recording, {"Content-Type": "audio/wav"})
+                print(response)
+                entities = response["entities"]
+                ### DIT WERKT NOG NIET!!
+                if entities[0]["name"] == "informationEntity:informationEntity":
+                    intent = "inform"
+                possible_topic = first_value(entities, "informationEntity:informationEntity")
+                topic = None
+                if possible_topic:
+                    topic = possible_topic
+                print(entity)
+                topic = None
+                #if possible_topic:
+                    #topic = possible_topic
+                return {"intent": intent, "responseWanted": True, "topic": None}
+                
+                if responseWanted:
+                    query = "{intent}***{responseWanted}***{topic}***{text}"
+                    print("Intent: " + {intent} + ", should respond: " + {responseWanted} + ", topic: " + {topic} + ", text: " + {text})
+                    return query
+                else:
+                    query = "{intent}***False***{topic}***{text}"
+                    print("Intent: " + {intent} + ", should respond: False, topic: " + {topic} + ", text: " + {text})
+                    // Doe iets adhv intent
+                    return query    
+                """
                 return {"intent": None, "responseWanted": False, "topic": None}
             elif speech_config.speechRecognizer == "vosk":
                 raise Exception("Not implemented yet")
@@ -203,7 +202,8 @@ async def main():
             stream.start_stream()
             await asyncio.to_thread(wakeUp_sync, stream, recognizer)
             return
-           
+         
+        #TODO: DEZE HERSCHRIJVEN OM OP PAUZE TE GAAN
         async def act():
             """This method makes the head act. It is the loop that will be used the most."""
             with sr.Microphone() as source:
@@ -221,9 +221,9 @@ async def main():
                             reply = "respondWit:::" + recognition
                         else:
                             reply = "respond:::" + recognition
-                        
-                        return   
+                        await publish(reply, "hub")   
         
+        #TODO: DEZE HERSCHRIJVEN OM REKENING TE HOUDEN DAT RESPONSEDRIVER NU HET DENKEN DOET
         async def actLoop(timeOutLimit = 4):
             """This method starts a loop where the robothead does things."""
             global awake
