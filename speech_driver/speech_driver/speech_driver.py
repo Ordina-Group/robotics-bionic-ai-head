@@ -187,6 +187,7 @@ async def main():
                     intent = None
                     topic = None
                     responseWanted = True
+                    """
                     response = client.speech(recording, {"Content-Type": "audio/wav"})
                     print(response)
                     entities = response["entities"]
@@ -201,6 +202,7 @@ async def main():
                     topic = None
                     #if possible_topic:
                         #topic = possible_topic
+                    """
                     return {"intent": intent, "responseWanted": True, "topic": None}
             elif speech_config.speechRecognizer == "vosk":
                 raise Exception("Not implemented yet")
