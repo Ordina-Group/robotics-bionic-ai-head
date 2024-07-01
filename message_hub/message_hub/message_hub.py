@@ -44,6 +44,9 @@ async def main():
                 elif instructions[0] == "pause":
                     reply = "pause:::" + str(instructions[1])
                     await publish(reply, "audio_input")
+                elif instructions[0] == "unpause":
+                    reply = "unpause"
+                    await publish(reply, "audio_input")
                 else:
                     raise Exception("Invalid instructions sent to hub.")
         

@@ -116,6 +116,7 @@ async def main():
                 return None
             return val
         
+        #TODO: DEZE FIXEN!!
         async def recognizeSpeech(audio):
             """This method recognizes user input with speech depending on speech_config.speechRecognizer, which defaults to whisper."""
             
@@ -253,13 +254,22 @@ async def main():
                 print("Speech: Message received: " + message.body.decode())
                 instructions = message.body.decode().split(":::")
                 if instructions[0] == "pause":
+                    if instructions[1] == "inf":
+                        global is_paused
+                        is_paused = True
+                        print("paused")
+                    else:
+                        global is_paused
+                        is_paused = True
+                        print("paused")
+                        pause_timer = int(instructions[1]) / 10
+                        await asyncio.sleep(pause_timer)
+                        print("unpaused")
+                        is_paused = False
+                elif instructions[0] == "unpause":
                     global is_paused
-                    is_paused = True
-                    print("paused")
-                    pause_timer = int(instructions[1]) / 10
-                    await asyncio.sleep(pause_timer)
-                    print("unpaused")
                     is_paused = False
+                    print("unpaused")
                 elif instructions[0] == "wakeup":
                     awake = True
                 elif instructions[0] == "sleep":

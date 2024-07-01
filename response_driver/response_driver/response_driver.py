@@ -115,6 +115,7 @@ async def main():
                     return "Wist je dat " + fact
             else:
                 if response_config.responseGenerator == "fietje":
+                    await publish("pause:::inf", "hub")
                     command = "echo " + text + " in zinnen van minimaal 10 en maximaal 20 woorden " + " | ollama run bramvanroy/fietje-2b-chat:Q3_K_M > output.txt"
                 elif response_config.responseGenerator == "llama":
                     command = "echo " + text + " | ollama run llama3 > output.txt"

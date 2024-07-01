@@ -4,8 +4,6 @@
 # For example, if you wish to select change the speech recognition solution to vosk, change 
 # 'speechRecognizer = recognizers[0]' to 'speechRecognizer = recognizers[3]'
 # Besides that, there's a few common misspellings of certain words. If you run into a new one, add it to the list.
-# Same goes for intents and trigger words. If you wish to change the topics the robot can talk about, see topics.py
-# If you write a new intent, make sure to also add it here.
 
 # Misspellings of Ordina. Becomes obsolete once the company's name changes to Sopra Steria
 misspelledOrdina = ["ordinna", "ordeena", "oortina", "ortina", "oordinnen", "mordina", "fordina", "jordina", "ordine", "marina", "olina", "ordinnen", "oordingen"]
