@@ -5,6 +5,11 @@ import sys
 import sound_driver.sound_driver.sound_driver as sound_driver
 import speech_driver.speech_driver.speech_driver as speech_driver
 import message_hub.message_hub.message_hub as message_hub
+import response_driver.response_driver as response_driver
+
+async def response():
+    print("Response driver running.")
+    await response_driver.main()
 
 async def sound():
     print("Sound driver running.")
@@ -31,9 +36,9 @@ async def main():
         import servo_driver.servo_driver.servo_driver as servo_driver
     while True:
         if servo_toggle == "y" or servo_toggle == "yes":
-            await asyncio.gather(sound(), servo(), hub(), speech())
+            await asyncio.gather(sound(), servo(), hub(), response(), speech())
         else:
-            await asyncio.gather(sound(), hub(), speech())
+            await asyncio.gather(sound(), hub(), response(), speech())
 
 if __name__ == "__main__":
     try:

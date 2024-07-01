@@ -32,6 +32,12 @@ async def main():
                 elif instructions[0] == "move":
                     reply = instructions[1]
                     await publish(reply, "servo")
+                elif instructions[0] == "respond":
+                    reply = "respond:::", instructions[1]
+                    await publish(reply, "response")
+                elif instructions[0] == "respondWit"):
+                    reply = "respondWit:::" + instructions[1]
+                    await publish(reply, "response")
                 elif instructions[0] == "talk":
                     reply = "speak:::" + instructions[1]
                     await publish(reply, "servo")
